@@ -40,6 +40,11 @@ const config: HardhatUserConfig = {
       url: process.env.SEPOLIA_RPC_URL || '',
       accounts: [deployer],
     },
+    goerli: {
+      chainId: 5,
+      url: process.env.GOERLI_RPC_URL || '',
+      accounts: [deployer],
+    },
     baseGoerli: {
       chainId: 84531,
       url: process.env.BASE_TEST_RPC_URL || '',
@@ -73,7 +78,8 @@ const config: HardhatUserConfig = {
     apiKey: {
       baseGoerli: BASE_BLOCK_EXPLORER_KEY,
       baseMainnet: BASE_BLOCK_EXPLORER_KEY,
-      sepolia: ETHEREUM_BLOCK_EXPLORER_KEY
+      sepolia: ETHEREUM_BLOCK_EXPLORER_KEY,
+      goerli: ETHEREUM_BLOCK_EXPLORER_KEY
     },
     customChains: [
       {
