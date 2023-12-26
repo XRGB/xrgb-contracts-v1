@@ -1,0 +1,25 @@
+import '@nomiclabs/hardhat-ethers';
+import { expect } from 'chai';
+import {
+    makeSuiteCleanRoom,
+    user,
+    deployer,
+    brc20Factory,
+} from '../__setup.spec';
+
+makeSuiteCleanRoom('Buy Key Subject', function () {
+    context('Generic', function () {
+
+        context('Negatives', function () {
+            it('User should fail to create BRC20 if not owner.',   async function () {
+                await expect(brc20Factory.connect(user).createBRC20("MoMo", "Momo", 18)).to.be.revertedWith("Ownable: caller is not the owner")
+            });
+        })
+
+        context('Scenarios', function () {
+            it('Get correct variable if create BRC2 success.',   async function () {
+                await expect(brc20Factory.connect(deployer).createBRC20("MoMo", "Momo", 18)).to.not.be.reverted;
+            });
+        })
+    })
+})
