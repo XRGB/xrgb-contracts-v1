@@ -12,6 +12,7 @@ library DataTypes {
     struct CreateBRC20Parameters {
         string name;
         string symbol;
-        uint8 decimals;
+        uint256 decimals;
+        uint256 supply;
     }
 }

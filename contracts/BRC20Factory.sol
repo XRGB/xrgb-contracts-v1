@@ -3,7 +3,6 @@ pragma solidity ^0.8.17;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import {BRC20FactoryStorage} from "./storage/BRC20FactoryStorage.sol";
 import {DataTypes} from "./libraries/DataTypes.sol";
 import {BRC20} from "./BRC20.sol";
@@ -12,52 +11,41 @@ import {Errors} from "./libraries/Errors.sol";
 
 contract BRC20Factory is BRC20FactoryStorage, ReentrancyGuard, Ownable {
     uint256 internal immutable _chainId;
-    using EnumerableSet for EnumerableSet.AddressSet;
 
     struct Parameters {
         string name;
         string symbol;
-        uint8 decimals;
+        uint256 decimals;
+        uint256 supply;
     }
 
-    constructor(address[] memory signers) {
-        for (uint256 i = 0; i < signers.length; i++) {
-            _signers.add(signers[i]);
-        }
-        _fee = 0.001 ether;
-
+    constructor() {
         uint256 chainId;
         assembly {
             chainId := chainid()
         }
-        DOMAIN_SEPARATOR = keccak256(
-            abi.encode(
-                DOMAIN_TYPEHASH,
-                DOMAIN_NAME,
-                keccak256(bytes("1")),
-                chainId,
-                address(this)
-            )
-        );
         _chainId = chainId;
         _supportChain[chainId] = true;
+        _fee = 0.001 ether;
     }
 
     function createBRC20(
         string memory name,
         string memory symbol,
-        uint8 decimals
+        uint256 decimals,
+        uint256 supply
     ) external onlyOwner returns (address brc20) {
         _parameters = DataTypes.CreateBRC20Parameters({
             name: name,
             symbol: symbol,
-            decimals: decimals
+            decimals: decimals,
+            supply: supply
         });
         brc20 = address(
             new BRC20{salt: keccak256(abi.encode(name, symbol, decimals))}()
         );
         delete _parameters;
-        emit Events.BRC20Created(brc20, name, symbol, decimals);
+        emit Events.BRC20Created(brc20, name, symbol, decimals, supply);
     }
 
     function mint(
@@ -125,30 +113,6 @@ contract BRC20Factory is BRC20FactoryStorage, ReentrancyGuard, Ownable {
     function setFee(uint256 newfee) external onlyOwner {
         emit Events.FeeChanged(_fee, newfee);
         _fee = newfee;
-    }
-
-    function buildMintSeparator(
-        address token,
-        address to,
-        uint256 amount,
-        string memory txid
-    ) public view returns (bytes32) {
-        return
-            keccak256(
-                abi.encodePacked(
-                    "\x19\x01",
-                    DOMAIN_SEPARATOR,
-                    keccak256(
-                        abi.encode(
-                            MINT_TYPEHASH,
-                            token,
-                            to,
-                            amount,
-                            keccak256(bytes(txid))
-                        )
-                    )
-                )
-            );
     }
 
     function startWith(

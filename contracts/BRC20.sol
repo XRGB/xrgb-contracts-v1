@@ -8,11 +8,13 @@ import {Events} from "./libraries/Events.sol";
 import {Errors} from "./libraries/Errors.sol";
 
 contract BRC20 is BRC20Storage {
-    uint8 public immutable decimals;
+    uint256 public immutable decimals;
+    uint256 public maxSupply;
     address public immutable factory;
 
     constructor() {
-        (name, symbol, decimals) = IBRC20Factory(msg.sender)._parameters();
+        (name, symbol, decimals, maxSupply) = IBRC20Factory(msg.sender)
+            ._parameters();
 
         factory = msg.sender;
 
@@ -123,6 +125,9 @@ contract BRC20 is BRC20Storage {
 
     function _mint(address to, uint256 amount) internal {
         totalSupply += amount;
+        if (totalSupply > maxSupply) {
+            revert Errors.ExceedMaxSupply();
+        }
 
         unchecked {
             balanceOf[to] += amount;

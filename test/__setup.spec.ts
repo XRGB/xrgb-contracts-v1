@@ -34,7 +34,7 @@ export const BRC20Factory_NAME = 'XRGB';
 export const token: string = 'XRGB';
 export const symbol: string = "XRGB";
 export const decimals = 10;
-export const mintAmount = 10000;
+export const mintAmount = 10;
 //export let brc20Address: string;
 
 export function makeSuiteCleanRoom(name: string, tests: () => void) {
@@ -56,18 +56,15 @@ before(async function () {
   user = accounts[1];
   userTwo = accounts[2];
 
-  signWallet = new ethers.Wallet(SIGN_PRIVATEKEY).connect(ethers.provider);
-
   deployerAddress = await deployer.getAddress();
   userAddress = await user.getAddress();
   userTwoAddress = await userTwo.getAddress();
 
-
-  brc20Factory = await new BRC20Factory__factory(deployer).deploy([signWallet.getAddress()]);
+  brc20Factory = await new BRC20Factory__factory(deployer).deploy();
 
   expect(brc20Factory).to.not.be.undefined;
 
-  await expect(brc20Factory.connect(user).createBRC20("MoMo", "Momo", 18)).to.be.revertedWith("Ownable: caller is not the owner")
+  await expect(brc20Factory.connect(user).createBRC20("MoMo", "Momo", 18, 1000)).to.be.revertedWith("Ownable: caller is not the owner")
   await expect(brc20Factory.connect(user).withdraw(deployerAddress)).to.be.revertedWith("Ownable: caller is not the owner")
   await expect(brc20Factory.connect(user).setSupportChain(1)).to.be.revertedWith("Ownable: caller is not the owner")
   await expect(brc20Factory.connect(user).setFee(10000)).to.be.revertedWith("Ownable: caller is not the owner")

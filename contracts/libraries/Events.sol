@@ -6,7 +6,8 @@ library Events {
         address indexed brc20Addr,
         string indexed name,
         string indexed symbol,
-        uint8 decimals
+        uint256 decimals,
+        uint256 maxSupply
     );
 
     event BRC20Minted(

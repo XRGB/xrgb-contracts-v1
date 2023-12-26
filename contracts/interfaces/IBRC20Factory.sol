@@ -5,7 +5,12 @@ interface IBRC20Factory {
     function _parameters()
         external
         view
-        returns (string memory name, string memory symbol, uint8 decimals);
+        returns (
+            string memory name,
+            string memory symbol,
+            uint256 decimals,
+            uint256 supply
+        );
 
     function createBRC20(
         string memory name,
