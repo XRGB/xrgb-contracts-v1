@@ -13,4 +13,5 @@ library Errors {
     error InvalidEVMAddress();
     error InvalidBTCAddress();
     error ExceedMaxSupply();
+    error InvalidTicker();
 }

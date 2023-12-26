@@ -13,6 +13,6 @@ library DataTypes {
         string name;
         string symbol;
         uint256 decimals;
-        uint256 supply;
+        uint256 maxSupply;
     }
 }

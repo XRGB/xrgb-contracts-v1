@@ -39,49 +39,49 @@ makeSuiteCleanRoom('Mint BRC20', function () {
 
             it('User should fail to mint BRC20 if use same txId.',   async function () {
                 await expect(brc20Factory.connect(deployer).mint(
-                    brc20Address, userAddress, mintAmount, txId
+                    token, userAddress, mintAmount, txId
                 )).to.not.be.reverted
                 await expect(brc20Factory.connect(deployer).mint(
-                    brc20Address, userAddress, mintAmount, txId
+                    token, userAddress, mintAmount, txId
                 )).to.be.revertedWithCustomError(brc20Factory, ERRORS.ALREADYMINT)
             });
 
             it('User should fail to burn BRC20 if fee not enough.',   async function () {
                 await expect(brc20Factory.connect(deployer).mint(
-                    brc20Address, userAddress, mintAmount, txId
+                    token, userAddress, mintAmount, txId
                 )).to.not.be.reverted
                 await expect(brc20Factory.connect(user).burn(
-                    brc20Address, mintAmount/2, 1, userTwoAddress
+                    token, mintAmount/2, 1, userTwoAddress
                 ,{value: 1000})).to.be.revertedWithCustomError(brc20Factory, ERRORS.INVALIDETH)
             });
 
             it('User should fail to burn BRC20 if burn to same chainid.',   async function () {
                 const fee = ethers.utils.parseEther("0.01")
                 await expect(brc20Factory.connect(deployer).mint(
-                    brc20Address, userAddress, mintAmount, txId
+                    token, userAddress, mintAmount, txId
                 )).to.not.be.reverted
                 await expect(brc20Factory.connect(user).burn(
-                    brc20Address, mintAmount/2, 31337, userTwoAddress
+                    token, mintAmount/2, 31337, userTwoAddress
                 ,{value: fee})).to.be.revertedWithCustomError(brc20Factory, ERRORS.INVALIDCHAINID)
             });
 
             it('User should fail to burn BRC20 if chainid not support.',   async function () {
                 const fee = ethers.utils.parseEther("0.01")
                 await expect(brc20Factory.connect(deployer).mint(
-                    brc20Address, userAddress, mintAmount, txId
+                    token, userAddress, mintAmount, txId
                 )).to.not.be.reverted
                 await expect(brc20Factory.connect(user).burn(
-                    brc20Address, mintAmount/2, 337, userTwoAddress
+                    token, mintAmount/2, 337, userTwoAddress
                 ,{value: fee})).to.be.revertedWithCustomError(brc20Factory, ERRORS.INVALIDCHAINID)
             });
 
             it('User should fail to burn BRC20 if address invalid.',   async function () {
                 const fee = ethers.utils.parseEther("0.01")
                 await expect(brc20Factory.connect(deployer).mint(
-                    brc20Address, userAddress, mintAmount, txId
+                    token, userAddress, mintAmount, txId
                 )).to.not.be.reverted
                 await expect(brc20Factory.connect(user).burn(
-                    brc20Address, mintAmount/2, 1, userTwoAddress
+                    token, mintAmount/2, 1, userTwoAddress
                 ,{value: fee})).to.be.revertedWithCustomError(brc20Factory, ERRORS.INVALIDEVMADDRESS)
             });
         })
@@ -89,7 +89,7 @@ makeSuiteCleanRoom('Mint BRC20', function () {
         context('Scenarios', function () {
             it('Get correct variable if mint BRC20 success.',   async function () {
                 await expect(brc20Factory.connect(deployer).mint(
-                    brc20Address, userAddress, mintAmount, txId
+                    token, userAddress, mintAmount, txId
                 )).to.not.be.reverted
 
                 let brc20Contract = BRC20__factory.connect(brc20Address, user);

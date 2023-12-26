@@ -9,4 +9,5 @@ abstract contract BRC20FactoryStorage {
 
     mapping(bytes32 => bool) public _usedTxid;
     mapping(uint256 => bool) public _supportChain;
+    mapping(string => address) public _ticker;
 }

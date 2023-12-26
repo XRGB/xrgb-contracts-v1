@@ -16,7 +16,7 @@ contract BRC20Factory is BRC20FactoryStorage, ReentrancyGuard, Ownable {
         string name;
         string symbol;
         uint256 decimals;
-        uint256 supply;
+        uint256 maxSupply;
     }
 
     constructor() {
@@ -33,43 +33,50 @@ contract BRC20Factory is BRC20FactoryStorage, ReentrancyGuard, Ownable {
         string memory name,
         string memory symbol,
         uint256 decimals,
-        uint256 supply
+        uint256 maxSupply
     ) external onlyOwner returns (address brc20) {
         _parameters = DataTypes.CreateBRC20Parameters({
             name: name,
             symbol: symbol,
             decimals: decimals,
-            supply: supply
+            maxSupply: maxSupply
         });
         brc20 = address(
             new BRC20{salt: keccak256(abi.encode(name, symbol, decimals))}()
         );
+        _ticker[name] = brc20;
         delete _parameters;
-        emit Events.BRC20Created(brc20, name, symbol, decimals, supply);
+        emit Events.BRC20Created(brc20, name, symbol, decimals, maxSupply);
     }
 
     function mint(
-        address token,
+        string memory ticker,
         address to,
         uint256 amount,
         string memory txid
     ) external onlyOwner nonReentrant {
+        if (_ticker[ticker] == address(0x0)) {
+            revert Errors.InvalidTicker();
+        }
         bytes32 txHash = keccak256(abi.encode(txid));
         if (_usedTxid[txHash]) {
             revert Errors.AlreadyMint();
         }
         _usedTxid[txHash] = true;
-        BRC20(token).mint(to, amount);
+        BRC20(_ticker[ticker]).mint(to, amount);
 
-        emit Events.BRC20Minted(token, to, amount, txid);
+        emit Events.BRC20Minted(ticker, to, amount, txid);
     }
 
     function burn(
-        address token,
+        string memory ticker,
         uint256 amount,
         uint256 chainId,
         string calldata receiver
     ) external payable nonReentrant {
+        if (_ticker[ticker] == address(0x0)) {
+            revert Errors.InvalidTicker();
+        }
         if (msg.value < _fee) {
             revert Errors.InvalidETH();
         }
@@ -88,11 +95,11 @@ contract BRC20Factory is BRC20FactoryStorage, ReentrancyGuard, Ownable {
             }
         }
 
-        BRC20(token).transferFrom(msg.sender, address(this), amount);
-        BRC20(token).burn(amount);
+        BRC20(_ticker[ticker]).transferFrom(msg.sender, address(this), amount);
+        BRC20(_ticker[ticker]).burn(amount);
 
         emit Events.BRC20Burned(
-            token,
+            ticker,
             msg.sender,
             amount,
             _fee,

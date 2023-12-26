@@ -11,14 +11,14 @@ library Events {
     );
 
     event BRC20Minted(
-        address indexed brc20Addr,
+        string indexed ticker,
         address indexed to,
-        uint256 amount,
+        uint256 indexed amount,
         string btcTxId
     );
 
     event BRC20Burned(
-        address indexed brc20Addr,
+        string indexed ticker,
         address indexed burner,
         uint256 amount,
         uint256 fee,

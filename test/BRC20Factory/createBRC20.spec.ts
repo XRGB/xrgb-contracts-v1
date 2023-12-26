@@ -19,6 +19,7 @@ makeSuiteCleanRoom('create BRC20', function () {
         context('Scenarios', function () {
             it('Get correct variable if create BRC2 success.',   async function () {
                 await expect(brc20Factory.connect(deployer).createBRC20("MoMo", "Momo", 18, 1000)).to.not.be.reverted;
+                await expect(brc20Factory.connect(deployer).createBRC20("MoMo", "Momo", 18, 1000)).to.be.reverted;
             });
         })
     })
