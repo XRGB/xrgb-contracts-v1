@@ -24,6 +24,7 @@ makeSuiteCleanRoom('Mint BRC20', function () {
 
     let brc20Address: string
     const txId: string = '3d122f7e3c6a65f72b1ca5f0a8d4a95d99e3c4f5e6d20743f52f2e01da024d81'
+    const btcTxId: string = 'tb1ppx05dj7lamhlf9a33ut82ld9qvp9mgtddwe7kqgg6jyppscshn6qm2926a'
 
     context('Generic', function () {
         beforeEach(async function () {
@@ -74,16 +75,6 @@ makeSuiteCleanRoom('Mint BRC20', function () {
                     token, mintAmount/2, 337, userTwoAddress
                 ,{value: fee})).to.be.revertedWithCustomError(brc20Factory, ERRORS.INVALIDCHAINID)
             });
-
-            it('User should fail to burn BRC20 if address invalid.',   async function () {
-                const fee = ethers.utils.parseEther("0.01")
-                await expect(brc20Factory.connect(deployer).mint(
-                    token, userAddress, mintAmount, txId
-                )).to.not.be.reverted
-                await expect(brc20Factory.connect(user).burn(
-                    token, mintAmount/2, 1, userTwoAddress
-                ,{value: fee})).to.be.revertedWithCustomError(brc20Factory, ERRORS.INVALIDEVMADDRESS)
-            });
         })
 
         context('Scenarios', function () {
@@ -94,6 +85,22 @@ makeSuiteCleanRoom('Mint BRC20', function () {
 
                 let brc20Contract = BRC20__factory.connect(brc20Address, user);
                 expect( await brc20Contract.balanceOf(userAddress)).to.equal(mintAmount);
+            });
+            it('Get correct variable if burn BRC20 success.',   async function () {
+                const btcChainId = ethers.constants.MaxUint256;
+                await expect(brc20Factory.connect(deployer).setSupportChain(btcChainId)).to.not.be.reverted
+
+                await expect(brc20Factory.connect(deployer).mint(
+                    token, userAddress, mintAmount, txId
+                )).to.not.be.reverted
+
+                let brc20Contract = BRC20__factory.connect(brc20Address, user);
+                expect( await brc20Contract.balanceOf(userAddress)).to.equal(mintAmount);
+                expect( await brc20Contract.approve(brc20Factory.address, mintAmount)).to.not.be.reverted;
+                await expect(brc20Factory.connect(user).burn(
+                    token, mintAmount - 5, btcChainId, btcTxId, {value: ethers.utils.parseEther('0.001')}
+                )).to.be.not.reverted;
+                expect( await brc20Contract.balanceOf(userAddress)).to.equal(5);
             });
         })
     })

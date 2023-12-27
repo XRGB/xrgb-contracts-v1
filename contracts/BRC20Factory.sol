@@ -26,6 +26,7 @@ contract BRC20Factory is BRC20FactoryStorage, ReentrancyGuard, Ownable {
         }
         _chainId = chainId;
         _supportChain[chainId] = true;
+        _supportChain[type(uint256).max] = true;
         _fee = 0.001 ether;
     }
 
@@ -83,17 +84,6 @@ contract BRC20Factory is BRC20FactoryStorage, ReentrancyGuard, Ownable {
         if (!_supportChain[chainId] || _chainId == chainId) {
             revert Errors.InvalidChainId();
         }
-        if (chainId == type(uint256).max) {
-            //testnet tb1p, mainnet bcp1
-            if (!startWith(receiver, "tb1p")) {
-                revert Errors.InvalidBTCAddress();
-            }
-        } else {
-            bytes calldata addr = bytes(receiver);
-            if (addr.length != 20) {
-                revert Errors.InvalidEVMAddress();
-            }
-        }
 
         BRC20(_ticker[ticker]).transferFrom(msg.sender, address(this), amount);
         BRC20(_ticker[ticker]).burn(amount);
@@ -117,25 +107,12 @@ contract BRC20Factory is BRC20FactoryStorage, ReentrancyGuard, Ownable {
         _supportChain[chainId] = true;
     }
 
+    function disableSupportChain(uint256 chainId) external onlyOwner {
+        _supportChain[chainId] = false;
+    }
+
     function setFee(uint256 newfee) external onlyOwner {
         emit Events.FeeChanged(_fee, newfee);
         _fee = newfee;
-    }
-
-    function startWith(
-        string memory str,
-        string memory sub
-    ) internal pure returns (bool found) {
-        bytes memory strBytes = bytes(str);
-        bytes memory subBytes = bytes(sub);
-
-        found = true;
-        for (uint i = 0; i <= subBytes.length; i++) {
-            if (strBytes[i] != subBytes[i]) {
-                found = false;
-                break;
-            }
-        }
-        return found;
     }
 }
