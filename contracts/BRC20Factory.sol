@@ -46,7 +46,7 @@ contract BRC20Factory is BRC20FactoryStorage, ReentrancyGuard, Ownable {
         );
         _ticker[name] = brc20;
         delete _parameters;
-        emit Events.BRC20Created(brc20, name, symbol, decimals, maxSupply);
+        emit Events.BRC20Created(brc20, decimals, maxSupply, name, symbol);
     }
 
     function mint(
@@ -65,7 +65,7 @@ contract BRC20Factory is BRC20FactoryStorage, ReentrancyGuard, Ownable {
         _usedTxid[txHash] = true;
         BRC20(_ticker[ticker]).mint(to, amount);
 
-        emit Events.BRC20Minted(ticker, to, amount, txid);
+        emit Events.BRC20Minted(to, amount, ticker, txid);
     }
 
     function burn(
@@ -99,11 +99,11 @@ contract BRC20Factory is BRC20FactoryStorage, ReentrancyGuard, Ownable {
         BRC20(_ticker[ticker]).burn(amount);
 
         emit Events.BRC20Burned(
-            ticker,
             msg.sender,
             amount,
             _fee,
             chainId,
+            ticker,
             receiver
         );
     }
