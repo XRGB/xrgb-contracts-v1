@@ -14,7 +14,7 @@ library Events {
         address indexed to,
         uint256 indexed amount,
         string ticker,
-        string btcTxId
+        string txId
     );
 
     event BRC20Burned(
