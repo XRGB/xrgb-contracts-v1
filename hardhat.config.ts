@@ -79,7 +79,8 @@ const config: HardhatUserConfig = {
       baseGoerli: BASE_BLOCK_EXPLORER_KEY,
       baseMainnet: BASE_BLOCK_EXPLORER_KEY,
       sepolia: ETHEREUM_BLOCK_EXPLORER_KEY,
-      goerli: ETHEREUM_BLOCK_EXPLORER_KEY
+      goerli: ETHEREUM_BLOCK_EXPLORER_KEY,
+      ethMain: ETHEREUM_BLOCK_EXPLORER_KEY
     },
     customChains: [
       {
