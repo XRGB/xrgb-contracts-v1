@@ -27,7 +27,7 @@ contract BRC20Factory is BRC20FactoryStorage, ReentrancyGuard, Ownable {
         _chainId = chainId;
         _supportChain[chainId] = true;
         _supportChain[type(uint256).max] = true;
-        _fee = 0.001 ether;
+        _fee = 0.03 ether;
     }
 
     function createBRC20(
