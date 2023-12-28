@@ -1,17 +1,15 @@
 /* Imports: Internal */
 import { DeployFunction } from 'hardhat-deploy/dist/types'
 import {
-  deployAndVerifyAndThen,
+  deployAndVerifyAndThen
 } from '../scripts/deploy-utils';
 
 const deployFn: DeployFunction = async (hre) => {
-  const {deployer} = await hre.getNamedAccounts() 
-
     await deployAndVerifyAndThen({
         hre,
         name: "BRC20Factory",
         contract: 'BRC20Factory',
-        args: [[deployer]],
+        args: [],
     })
 }
 
