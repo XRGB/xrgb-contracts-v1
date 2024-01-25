@@ -31,8 +31,8 @@ contract BRC20Factory is BRC20FactoryStorage, ReentrancyGuard, Ownable {
     }
 
     function createBRC20(
-        string memory name,
-        string memory symbol,
+        string calldata name,
+        string calldata symbol,
         uint256 decimals,
         uint256 maxSupply
     ) external onlyOwner returns (address brc20) {
@@ -51,10 +51,10 @@ contract BRC20Factory is BRC20FactoryStorage, ReentrancyGuard, Ownable {
     }
 
     function mint(
-        string memory ticker,
+        string calldata ticker,
         address to,
         uint256 amount,
-        string memory txid
+        string calldata txid
     ) external onlyOwner nonReentrant {
         if (_ticker[ticker] == address(0x0)) {
             revert Errors.InvalidTicker();
@@ -70,7 +70,7 @@ contract BRC20Factory is BRC20FactoryStorage, ReentrancyGuard, Ownable {
     }
 
     function burn(
-        string memory ticker,
+        string calldata ticker,
         uint256 amount,
         uint256 chainId,
         string calldata receiver

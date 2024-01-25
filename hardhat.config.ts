@@ -29,27 +29,15 @@ const config: HardhatUserConfig = {
     hardhat: {
       gas: 16000000,
     },
-    mumbai: {
-      chainId: 80001,
-      url: process.env.MUMBAI_RPC_URL || '',
-      accounts: [deployer],
-      gas: 16000000,
-    },
-    sepolia: {
-      chainId: 11155111,
-      url: process.env.SEPOLIA_RPC_URL || '',
+    bnb: {
+      chainId: 56,
+      url: process.env.BNB_RPC_URL || '',
       accounts: [deployer],
     },
-    goerli: {
-      chainId: 5,
-      url: process.env.GOERLI_RPC_URL || '',
+    linea: {
+      chainId: 59144,
+      url: process.env.LINEA_RPC_URL || '',
       accounts: [deployer],
-    },
-    baseGoerli: {
-      chainId: 84531,
-      url: process.env.BASE_TEST_RPC_URL || '',
-      accounts: [deployer],
-      gasPrice: 1000000000,
     },
     baseMain: {
       chainId: 8453,
@@ -57,16 +45,11 @@ const config: HardhatUserConfig = {
       accounts: [deployer],
       gasPrice: 1000000000,
     },
-    jolnir: {
-      chainId: 167007,
-      url: process.env.TAIKO_TESTNET_URL || '',
+    baseGoerli: {
+      chainId: 84531,
+      url: process.env.BASE_TEST_RPC_URL || '',
       accounts: [deployer],
       gasPrice: 1000000000,
-    },
-    ethMain: {
-      chainId: 1,
-      url: process.env.ETHMAIN_RPC_URL || '',
-      accounts: [deployer],
     },
   },
   namedAccounts: {
@@ -78,7 +61,8 @@ const config: HardhatUserConfig = {
     apiKey: {
       baseGoerli: BASE_BLOCK_EXPLORER_KEY,
       baseMainnet: BASE_BLOCK_EXPLORER_KEY,
-      sepolia: ETHEREUM_BLOCK_EXPLORER_KEY,
+      linea: ETHEREUM_BLOCK_EXPLORER_KEY,
+      bnb:ETHEREUM_BLOCK_EXPLORER_KEY,
       goerli: ETHEREUM_BLOCK_EXPLORER_KEY,
       ethMain: ETHEREUM_BLOCK_EXPLORER_KEY
     },
