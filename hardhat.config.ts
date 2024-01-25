@@ -31,12 +31,12 @@ const config: HardhatUserConfig = {
     hardhat: {
       gas: 16000000,
     },
-    bnb: {
+    bnb_mainnet: {
       chainId: 56,
       url: process.env.BNB_RPC_URL || '',
       accounts: [deployer],
     },
-    linea: {
+    linea_mainnet: {
       chainId: 59144,
       url: process.env.LINEA_RPC_URL || '',
       accounts: [deployer],
@@ -63,17 +63,17 @@ const config: HardhatUserConfig = {
     apiKey: {
       baseGoerli: BASE_BLOCK_EXPLORER_KEY,
       baseMainnet: BASE_BLOCK_EXPLORER_KEY,
-      linea: LINEA_BLOCK_EXPLORER_KEY,
-      bnb:BNB_BLOCK_EXPLORER_KEY,
+      linea_mainnet: LINEA_BLOCK_EXPLORER_KEY,
+      bnb_mainnet: BNB_BLOCK_EXPLORER_KEY,
       ethMain: ETHEREUM_BLOCK_EXPLORER_KEY
     },
     customChains: [
       {
-        network: "baseGoerli",
-        chainId: 84531,
+        network: "linea_mainnet",
+        chainId: 59144,
         urls: {
-         apiURL: "https://api-goerli.basescan.org/api",
-         browserURL: "https://goerli.basescan.org"
+         apiURL: "https://api.lineascan.build/api",
+         browserURL: "https://lineascan.build/"
         }
       },
       {
@@ -82,6 +82,14 @@ const config: HardhatUserConfig = {
         urls: {
          apiURL: "https://api.basescan.org/api",
          browserURL: "https://basescan.org"
+        }
+      },
+      {
+        network: "bnb_mainnet",
+        chainId: 56,
+        urls: {
+         apiURL: "https://bsc-dataseed.binance.org/",
+         browserURL: "https://bscscan.com"
         }
       }
     ]
