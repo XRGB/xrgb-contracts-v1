@@ -7,6 +7,8 @@ dotenv.config()
 const deployer = process.env.DEPLOY_PRIVATE_KEY || '0x' + '11'.repeat(32)
 const BASE_BLOCK_EXPLORER_KEY = process.env.BASE_BLOCK_EXPLORER_KEY || '';
 const ETHEREUM_BLOCK_EXPLORER_KEY = process.env.ETHEREUM_BLOCK_EXPLORER_KEY || '';
+const LINEA_BLOCK_EXPLORER_KEY = process.env.LINEA_BLOCK_EXPLORER_KEY || '';
+const BNB_BLOCK_EXPLORER_KEY = process.env.BNB_BLOCK_EXPLORER_KEY || '';
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -61,9 +63,8 @@ const config: HardhatUserConfig = {
     apiKey: {
       baseGoerli: BASE_BLOCK_EXPLORER_KEY,
       baseMainnet: BASE_BLOCK_EXPLORER_KEY,
-      linea: ETHEREUM_BLOCK_EXPLORER_KEY,
-      bnb:ETHEREUM_BLOCK_EXPLORER_KEY,
-      goerli: ETHEREUM_BLOCK_EXPLORER_KEY,
+      linea: LINEA_BLOCK_EXPLORER_KEY,
+      bnb:BNB_BLOCK_EXPLORER_KEY,
       ethMain: ETHEREUM_BLOCK_EXPLORER_KEY
     },
     customChains: [
