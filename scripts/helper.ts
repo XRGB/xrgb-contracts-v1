@@ -1,4 +1,28 @@
 import { ethers } from 'ethers'
+import hre from 'hardhat';
+import {
+    getContractFromArtifact
+  } from '../scripts/deploy-utils';
+
+async function test() {
+    const {deployer} = await hre.getNamedAccounts()
+    const BRC20Factory = await getContractFromArtifact(
+      hre,
+      "BRC20Factory",
+      {
+        signerOrProvider: deployer,
+      }
+    )
+    
+    console.log("Create BRC20...")
+    const ticker = "XXOD"
+    const decimal = ethers.utils.parseEther("1")
+    const maxSupply = ethers.utils.parseEther("21000000")
+  
+    await BRC20Factory.createBRC20(ticker, ticker, decimal, maxSupply)
+    console.log("create BRC20 success...")
+}
+
 
 // let deployer = ethers.Wallet.createRandom();
 

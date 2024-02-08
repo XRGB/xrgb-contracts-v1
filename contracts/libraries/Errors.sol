@@ -14,4 +14,12 @@ library Errors {
     error InvalidBTCAddress();
     error ExceedMaxSupply();
     error InvalidTicker();
+    error TickerAlreadyExist();
+    error Unauthorized();
+
+    error NotFound();
+    error AlreadyExists();
+    error InvalidRecipient();
+    error InvalidSender();
+    error UnsafeRecipient();
 }
