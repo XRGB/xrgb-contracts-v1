@@ -12,13 +12,6 @@ import {Errors} from "./libraries/Errors.sol";
 contract BRC404Factory is ReentrancyGuard, Ownable, BRC404FactoryStorage {
     uint256 internal immutable _chainId;
 
-    struct Parameters {
-        string name;
-        string symbol;
-        uint8 decimals;
-        uint256 maxSupply;
-    }
-
     constructor() Ownable(msg.sender) {
         uint256 chainId;
         assembly {

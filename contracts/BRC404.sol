@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.17;
 
-import {ERC404} from "./interfaces/ERC404.sol";
+import {ERC404} from "./ERC404.sol";
 import {IBRC404Factory} from "./interfaces/IBRC404Factory.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Errors} from "./libraries/Errors.sol";
@@ -21,10 +21,9 @@ contract BRC404 is ERC404 {
         _;
     }
 
-    constructor() ERC404(msg.sender) {
-        (name, symbol, decimals, maxSupply, nftUnit) = IBRC404Factory(
-            msg.sender
-        )._parameters();
+    constructor() {
+        (name, symbol, decimals, maxSupply, units) = IBRC404Factory(msg.sender)
+            ._parameters();
 
         factory = msg.sender;
     }
@@ -51,6 +50,10 @@ contract BRC404 is ERC404 {
         _burnBRC404(from, amount);
     }
 
+    function setWhitelist(address target_, bool state_) external onlyFactory {
+        _setWhitelist(target_, state_);
+    }
+
     /**************Internal Function **********/
 
     function _mintBRC404(address to, uint256 amount) internal {
@@ -59,33 +62,31 @@ contract BRC404 is ERC404 {
             revert Errors.ExceedMaxSupply();
         }
 
-        uint256 unit = _getUnit();
         uint256 balanceBeforeReceiver = balanceOf[to];
         unchecked {
             balanceOf[to] += amount;
         }
-        uint256 tokens_to_mint = (balanceOf[to] / unit) -
-            (balanceBeforeReceiver / unit);
+        uint256 tokens_to_mint = (balanceOf[to] / units) -
+            (balanceBeforeReceiver / units);
 
         for (uint256 i = 0; i < tokens_to_mint; i++) {
-            _mint(to);
+            _retrieveOrMintERC721(to);
         }
 
         emit Events.ERC20Transfer(address(0), to, amount);
     }
 
     function _burnBRC404(address from, uint256 amount) internal {
-        uint256 unit = _getUnit();
         uint256 balanceBeforeSender = balanceOf[from];
         balanceOf[from] -= amount;
         unchecked {
             totalSupply -= amount;
         }
-        uint256 tokens_to_burn = (balanceBeforeSender / unit) -
-            (balanceOf[from] / unit);
+        uint256 tokens_to_burn = (balanceBeforeSender / units) -
+            (balanceOf[from] / units);
 
         for (uint256 i = 0; i < tokens_to_burn; i++) {
-            _burn(from);
+            _withdrawAndStoreERC721(from);
         }
 
         emit Events.ERC20Transfer(from, address(0), amount);
