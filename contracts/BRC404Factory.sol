@@ -3,16 +3,16 @@ pragma solidity ^0.8.17;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import {BRC20WithERC404FactoryStorage} from "./storage/BRC20WithERC404FactoryStorage.sol";
+import {BRC404FactoryStorage} from "./storage/BRC404FactoryStorage.sol";
 import {DataTypes} from "./libraries/DataTypes.sol";
-import {BRC20WithERC404} from "./BRC20WithERC404.sol";
+import {BRC404} from "./BRC404.sol";
 import {Events} from "./libraries/Events.sol";
 import {Errors} from "./libraries/Errors.sol";
 
-contract BRC20WithERC404Factory is
+contract BRC404Factory is
     ReentrancyGuard,
     Ownable,
-    BRC20WithERC404FactoryStorage
+    BRC404FactoryStorage
 {
     uint256 internal immutable _chainId;
 
@@ -33,41 +33,41 @@ contract BRC20WithERC404Factory is
         _fee = 0.03 ether;
     }
 
-    function createBRC20WithERC404(
+    function createBRC404(
         string memory name,
         string memory symbol,
         uint8 decimals,
-        uint256 maxERC20Supply,
+        uint256 maxSupply,
         uint256 nftUnit
-    ) external onlyOwner returns (address brc20) {
+    ) external onlyOwner returns (address brc404) {
         if (_ticker[name] != address(0x0)) {
             revert Errors.TickerAlreadyExist();
         }
-        _parameters = DataTypes.CreateBRC20WithERC404Parameters({
+        _parameters = DataTypes.CreateBRC404Parameters({
             name: name,
             symbol: symbol,
             decimals: decimals,
-            maxERC20Supply: maxERC20Supply,
+            maxSupply: maxSupply,
             nftUnit: nftUnit
         });
-        brc20 = address(
-            new BRC20WithERC404{
+        brc404 = address(
+            new BRC404{
                 salt: keccak256(abi.encode(name, symbol, decimals))
             }()
         );
-        _ticker[name] = brc20;
+        _ticker[name] = brc404;
         delete _parameters;
-        emit Events.BRC20WithERC404Created(
-            brc20,
+        emit Events.BRC404Created(
+            brc404,
             decimals,
-            maxERC20Supply,
+            maxSupply,
             nftUnit,
             name,
             symbol
         );
     }
 
-    function mintBRC20(
+    function mintBRC404(
         string memory ticker,
         address to,
         uint256 amount,
@@ -81,12 +81,12 @@ contract BRC20WithERC404Factory is
             revert Errors.AlreadyMint();
         }
         _usedTxid[txHash] = true;
-        BRC20WithERC404(_ticker[ticker]).mintBRC20(to, amount);
+        BRC404(_ticker[ticker]).mintBRC404(to, amount);
 
-        emit Events.BRC20Minted(to, amount, ticker, txid);
+        emit Events.BRC404Minted(to, amount, ticker, txid);
     }
 
-    function burnBRC20(
+    function burnBRC404(
         string memory ticker,
         uint256 amount,
         uint256 chainId,
@@ -96,15 +96,15 @@ contract BRC20WithERC404Factory is
             revert Errors.InvalidTicker();
         }
         if (msg.value < _fee) {
-            revert Errors.InvalidETH();
+            revert Errors.InvalidFee();
         }
         if (!_supportChain[chainId] || _chainId == chainId) {
             revert Errors.InvalidChainId();
         }
 
-        BRC20WithERC404(_ticker[ticker]).burnBRC20(msg.sender, amount);
+        BRC404(_ticker[ticker]).burnBRC404(msg.sender, amount);
 
-        emit Events.BRC20Burned(
+        emit Events.BRC404Burned(
             msg.sender,
             amount,
             _fee,
@@ -121,7 +121,7 @@ contract BRC20WithERC404Factory is
         if (_ticker[ticker] == address(0x0)) {
             revert Errors.InvalidTicker();
         }
-        BRC20WithERC404(_ticker[ticker]).setTokenURI(_tokenURI);
+        BRC404(_ticker[ticker]).setTokenURI(_tokenURI);
     }
 
     function setDataURI(
@@ -131,7 +131,7 @@ contract BRC20WithERC404Factory is
         if (_ticker[ticker] == address(0x0)) {
             revert Errors.InvalidTicker();
         }
-        BRC20WithERC404(_ticker[ticker]).setTokenURI(_dataURI);
+        BRC404(_ticker[ticker]).setTokenURI(_dataURI);
     }
 
     function withdraw(address to) external onlyOwner {
@@ -156,6 +156,6 @@ contract BRC20WithERC404Factory is
         if (_ticker[ticker] == address(0x0)) {
             revert Errors.InvalidTicker();
         }
-        BRC20WithERC404(_ticker[ticker]).setWhitelist(target, state);
+        BRC404(_ticker[ticker]).setWhitelist(target, state);
     }
 }

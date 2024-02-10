@@ -8,7 +8,7 @@ library Errors {
     error OnlyCallByFactory();
     error AlreadyExpired();
     error InvalidSignature();
-    error InvalidETH();
+    error InvalidFee();
     error InvalidChainId();
     error InvalidEVMAddress();
     error InvalidBTCAddress();

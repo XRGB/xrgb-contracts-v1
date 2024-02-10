@@ -3,15 +3,15 @@
 pragma solidity ^0.8.17;
 
 import {ERC404} from "./interfaces/ERC404.sol";
-import {IBRC20WithERC404Factory} from "./interfaces/IBRC20WithERC404Factory.sol";
+import {IBRC404Factory} from "./interfaces/IBRC404Factory.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Errors} from "./libraries/Errors.sol";
 import {Events} from "./libraries/Events.sol";
 
-contract BRC20WithERC404 is ERC404 {
+contract BRC404 is ERC404 {
     string public dataURI;
     string public baseTokenURI;
-    uint256 maxERC20Supply;
+    uint256 maxSupply;
     address public immutable factory;
 
     modifier onlyFactory() {
@@ -26,9 +26,9 @@ contract BRC20WithERC404 is ERC404 {
             name,
             symbol,
             decimals,
-            maxERC20Supply,
+            maxSupply,
             nftUnit
-        ) = IBRC20WithERC404Factory(msg.sender)._parameters();
+        ) = IBRC404Factory(msg.sender)._parameters();
 
         factory = msg.sender;
     }
@@ -47,19 +47,19 @@ contract BRC20WithERC404 is ERC404 {
         return string.concat(baseTokenURI, Strings.toString(id));
     }
 
-    function mintBRC20(address to, uint256 amount) external onlyFactory {
-        _mintBRC20(to, amount);
+    function mintBRC404(address to, uint256 amount) external onlyFactory {
+        _mintBRC404(to, amount);
     }
 
-    function burnBRC20(address from, uint256 amount) external onlyFactory {
-        _burnBRC20(from, amount);
+    function burnBRC404(address from, uint256 amount) external onlyFactory {
+        _burnBRC404(from, amount);
     }
 
     /**************Internal Function **********/
 
-    function _mintBRC20(address to, uint256 amount) internal {
+    function _mintBRC404(address to, uint256 amount) internal {
         totalSupply += amount;
-        if (totalSupply > maxERC20Supply) {
+        if (totalSupply > maxSupply) {
             revert Errors.ExceedMaxSupply();
         }
 
@@ -76,7 +76,7 @@ contract BRC20WithERC404 is ERC404 {
         emit Events.ERC20Transfer(address(0), to, amount);
     }
 
-    function _burnBRC20(address from, uint256 amount) internal {
+    function _burnBRC404(address from, uint256 amount) internal {
         balanceOf[from] -= amount;
 
         unchecked {
