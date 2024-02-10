@@ -22,13 +22,9 @@ contract BRC404 is ERC404 {
     }
 
     constructor() ERC404(msg.sender) {
-        (
-            name,
-            symbol,
-            decimals,
-            maxSupply,
-            nftUnit
-        ) = IBRC404Factory(msg.sender)._parameters();
+        (name, symbol, decimals, maxSupply, nftUnit) = IBRC404Factory(
+            msg.sender
+        )._parameters();
 
         factory = msg.sender;
     }
@@ -63,12 +59,14 @@ contract BRC404 is ERC404 {
             revert Errors.ExceedMaxSupply();
         }
 
+        uint256 unit = _getUnit();
+        uint256 balanceBeforeReceiver = balanceOf[to];
         unchecked {
             balanceOf[to] += amount;
         }
+        uint256 tokens_to_mint = (balanceOf[to] / unit) -
+            (balanceBeforeReceiver / unit);
 
-        uint256 unit = _getUnit();
-        uint256 tokens_to_mint = (amount / unit);
         for (uint256 i = 0; i < tokens_to_mint; i++) {
             _mint(to);
         }
@@ -77,15 +75,16 @@ contract BRC404 is ERC404 {
     }
 
     function _burnBRC404(address from, uint256 amount) internal {
+        uint256 unit = _getUnit();
+        uint256 balanceBeforeSender = balanceOf[from];
         balanceOf[from] -= amount;
-
         unchecked {
             totalSupply -= amount;
         }
+        uint256 tokens_to_burn = (balanceBeforeSender / unit) -
+            (balanceOf[from] / unit);
 
-        uint256 unit = _getUnit();
-        uint256 tokens_to_mint = (amount / unit);
-        for (uint256 i = 0; i < tokens_to_mint; i++) {
+        for (uint256 i = 0; i < tokens_to_burn; i++) {
             _burn(from);
         }
 

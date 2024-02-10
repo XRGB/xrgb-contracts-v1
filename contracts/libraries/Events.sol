@@ -6,7 +6,7 @@ library Events {
         address indexed addr,
         uint256 decimals,
         uint256 maxSupply,
-        uint256 maxNftSupply,
+        uint256 nftUnit,
         string name,
         string symbol
     );

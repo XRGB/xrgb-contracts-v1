@@ -9,11 +9,7 @@ import {BRC404} from "./BRC404.sol";
 import {Events} from "./libraries/Events.sol";
 import {Errors} from "./libraries/Errors.sol";
 
-contract BRC404Factory is
-    ReentrancyGuard,
-    Ownable,
-    BRC404FactoryStorage
-{
+contract BRC404Factory is ReentrancyGuard, Ownable, BRC404FactoryStorage {
     uint256 internal immutable _chainId;
 
     struct Parameters {
@@ -51,9 +47,7 @@ contract BRC404Factory is
             nftUnit: nftUnit
         });
         brc404 = address(
-            new BRC404{
-                salt: keccak256(abi.encode(name, symbol, decimals))
-            }()
+            new BRC404{salt: keccak256(abi.encode(name, symbol, decimals))}()
         );
         _ticker[name] = brc404;
         delete _parameters;
