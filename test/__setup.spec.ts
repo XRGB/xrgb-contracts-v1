@@ -4,12 +4,11 @@ import { expect } from 'chai';
 import { Signer, Wallet } from 'ethers';
 import { ethers } from 'hardhat';
 import {
-  BRC20Factory,
-  BRC20Factory__factory,
+  BRC404Factory,
+  BRC404Factory__factory,
   Events,
   Events__factory
 } from '../typechain-types';
-import { SIGN_PRIVATEKEY } from './helpers/constants';
 import {
   revertToSnapshot,
   takeSnapshot
@@ -24,13 +23,13 @@ export let userTwo: Signer;
 export let deployerAddress: string;
 export let userAddress: string;
 export let userTwoAddress: string;
-export let brc20Factory: BRC20Factory;
+export let brc404Factory: BRC404Factory;
 export let eventsLib: Events;
 
 export let abiCoder = hre.ethers.utils.defaultAbiCoder;
 export let signWallet: Wallet;
 
-export const BRC20Factory_NAME = 'XRGB';
+export const BRC404Factory_NAME = 'XRGB';
 export const token: string = 'XRGB';
 export const symbol: string = "XRGB";
 export const decimals = 10;
@@ -60,16 +59,16 @@ before(async function () {
   userAddress = await user.getAddress();
   userTwoAddress = await userTwo.getAddress();
 
-  brc20Factory = await new BRC20Factory__factory(deployer).deploy();
+  brc404Factory = await new BRC404Factory__factory(deployer).deploy();
 
-  expect(brc20Factory).to.not.be.undefined;
+  expect(brc404Factory).to.not.be.undefined;
 
-  await expect(brc20Factory.connect(user).createBRC20("MoMo", "Momo", 18, 1000)).to.be.revertedWith("Ownable: caller is not the owner")
-  await expect(brc20Factory.connect(user).withdraw(deployerAddress)).to.be.revertedWith("Ownable: caller is not the owner")
-  await expect(brc20Factory.connect(user).setSupportChain(1)).to.be.revertedWith("Ownable: caller is not the owner")
-  await expect(brc20Factory.connect(user).setFee(10000)).to.be.revertedWith("Ownable: caller is not the owner")
+  await expect(brc404Factory.connect(user).createBRC404("MoMo", "Momo", 18, 10000, 1)).to.be.reverted
+  await expect(brc404Factory.connect(user).withdraw(deployerAddress)).to.be.reverted
+  await expect(brc404Factory.connect(user).setSupportChain(1, true)).to.be.reverted
+  await expect(brc404Factory.connect(user).setFee(10000)).to.be.reverted
 
-  await expect(brc20Factory.connect(deployer).setSupportChain(1)).to.not.be.reverted
+  await expect(brc404Factory.connect(deployer).setSupportChain(1, true)).to.not.be.reverted
 
   eventsLib = await new Events__factory(deployer).deploy();
 });

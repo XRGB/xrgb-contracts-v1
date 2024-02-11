@@ -3,7 +3,7 @@ export const ERRORS = {
   ALREADYMINT: 'AlreadyMint',
   NOTSIGNER: 'NotSigner',
   DUPLICATESIGN: 'DuplicateSign',
-  INVALIDETH: 'InvalidETH',
+  INVALIDFEE: 'InvalidFee',
   INVALIDCHAINID: 'InvalidChainId',
   INVALIDEVMADDRESS: 'InvalidEVMAddress'
 };
