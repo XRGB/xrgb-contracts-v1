@@ -32,9 +32,10 @@ export let signWallet: Wallet;
 export const BRC404Factory_NAME = 'XRGB';
 export const token: string = 'XRGB';
 export const symbol: string = "XRGB";
-export const decimals = 10;
-export const mintAmount = 10;
-//export let brc20Address: string;
+export const decimals = 18;
+export const mintAmount = ethers.utils.parseEther("2");
+export const burnAmount = ethers.utils.parseEther("1");
+export const mintAmount1 = ethers.utils.parseEther("0.5");
 
 export function makeSuiteCleanRoom(name: string, tests: () => void) {
   describe(name, () => {
