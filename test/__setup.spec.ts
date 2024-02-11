@@ -30,7 +30,7 @@ export let abiCoder = hre.ethers.utils.defaultAbiCoder;
 export let signWallet: Wallet;
 
 export const BRC404Factory_NAME = 'XRGB';
-export const token: string = 'XRGB';
+export const ticker: string = 'XRGB';
 export const symbol: string = "XRGB";
 export const decimals = 18;
 export const mintAmount = ethers.utils.parseEther("2");
