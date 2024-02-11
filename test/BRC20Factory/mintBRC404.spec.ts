@@ -170,7 +170,7 @@ makeSuiteCleanRoom('Mint BRC404', function () {
                 )).to.not.be.reverted
                 expect( await brc20Contract.balanceOf(userTwoAddress)).to.equal(mintAmount1.mul(2));
                 expect( await brc20Contract.erc721BalanceOf(userTwoAddress)).to.equal(1);
-                expect( await brc20Contract.ownerOf(4)).to.equal(userTwoAddress);
+                expect( await brc20Contract.ownerOf(5)).to.equal(userTwoAddress);
             });
         })
     })

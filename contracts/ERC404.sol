@@ -3,14 +3,14 @@ pragma solidity ^0.8.20;
 
 import {IERC404} from "./interfaces/IERC404.sol";
 import {ERC721Receiver} from "./libraries/ERC721Receiver.sol";
-import {DoubleEndedQueue} from "./libraries/DoubleEndedQueue.sol";
+//import {DoubleEndedQueue} from "./libraries/DoubleEndedQueue.sol";
 import {IERC165} from "./interfaces/IERC165.sol";
 
 abstract contract ERC404 is IERC404 {
-    using DoubleEndedQueue for DoubleEndedQueue.Uint256Deque;
+    //using DoubleEndedQueue for DoubleEndedQueue.Uint256Deque;
 
     /// @dev The queue of ERC-721 tokens stored in the contract.
-    DoubleEndedQueue.Uint256Deque private _storedERC721Ids;
+    //DoubleEndedQueue.Uint256Deque private _storedERC721Ids;
 
     /// @dev Token name
     string public name;
@@ -111,9 +111,9 @@ abstract contract ERC404 is IERC404 {
         return _minted;
     }
 
-    function erc721TokensBankedInQueue() public view virtual returns (uint256) {
-        return _storedERC721Ids.length();
-    }
+    // function erc721TokensBankedInQueue() public view virtual returns (uint256) {
+    //     return _storedERC721Ids.length();
+    // }
 
     /// @notice tokenURI must be implemented by child contract
     function tokenURI(uint256 id_) public view virtual returns (string memory);
@@ -563,15 +563,15 @@ abstract contract ERC404 is IERC404 {
 
         uint256 id;
 
-        if (!DoubleEndedQueue.empty(_storedERC721Ids)) {
-            // If there are any tokens in the bank, use those first.
-            // Pop off the end of the queue (FIFO).
-            id = _storedERC721Ids.popBack();
-        } else {
-            // Otherwise, mint a new token, should not be able to go over the total fractional supply.
-            _minted++;
-            id = _minted;
-        }
+        // if (!DoubleEndedQueue.empty(_storedERC721Ids)) {
+        //     // If there are any tokens in the bank, use those first.
+        //     // Pop off the end of the queue (FIFO).
+        //     id = _storedERC721Ids.popBack();
+        // } else {
+        // Otherwise, mint a new token, should not be able to go over the total fractional supply.
+        _minted++;
+        id = _minted;
+        //}
 
         address erc721Owner = _getOwnerOf(id);
 
@@ -599,7 +599,7 @@ abstract contract ERC404 is IERC404 {
         _transferERC721(from_, address(0), id);
 
         // Record the token in the contract's bank queue.
-        _storedERC721Ids.pushFront(id);
+        //_storedERC721Ids.pushFront(id);
     }
 
     /// @notice Initialization function to set pairs / etc, saving gas by avoiding mint / burn on unnecessary targets

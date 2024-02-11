@@ -95,7 +95,7 @@ interface IERC404 is IERC165 {
 
     function transfer(address to_, uint256 amount_) external returns (bool);
 
-    function erc721TokensBankedInQueue() external view returns (uint256);
+    //function erc721TokensBankedInQueue() external view returns (uint256);
 
     function safeTransferFrom(address from_, address to_, uint256 id_) external;
 
