@@ -51,8 +51,8 @@ const config: HardhatUserConfig = {
       url: process.env.BASE_MAIN_RPC_URL || '',
       accounts: [deployer],
     },
-    baseGoerli: {
-      chainId: 84531,
+    baseSepolia: {
+      chainId: 84532,
       url: process.env.BASE_TEST_RPC_URL || '',
       accounts: [deployer],
     },
@@ -80,7 +80,7 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: {
       goerli: ETHEREUM_BLOCK_EXPLORER_KEY,
-      baseGoerli: BASE_BLOCK_EXPLORER_KEY,
+      baseSepolia: BASE_BLOCK_EXPLORER_KEY,
       baseMainnet: BASE_BLOCK_EXPLORER_KEY,
       linea_mainnet: LINEA_BLOCK_EXPLORER_KEY,
       linea_tesetnet: LINEA_BLOCK_EXPLORER_KEY,
@@ -113,11 +113,11 @@ const config: HardhatUserConfig = {
         }
       },
       {
-        network: "baseGoerli",
-        chainId: 84531,
+        network: "baseSepolia",
+        chainId: 84532,
         urls: {
-         apiURL: "https://api-goerli.basescan.org/api",
-         browserURL: "https://goerli.basescan.org/"
+         apiURL: "https://api-sepolia.basescan.org/api",
+         browserURL: "https://sepolia.basescan.org/"
         }
       }
     ]
