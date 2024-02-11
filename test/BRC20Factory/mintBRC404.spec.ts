@@ -29,6 +29,7 @@ makeSuiteCleanRoom('Mint BRC404', function () {
     const btcTxId1: string = '3d122f7e3c6a65f72b1ca5f0a8d4a95d99e3c4f5e6d20743f52f2e01da024d82'
     const btcTxId2: string = '3d122f7e3c6a65f72b1ca5f0a8d4a95d99e3c4f5e6d20743f52f2e01da024d83'
     const btcTxId3: string = '3d122f7e3c6a65f72b1ca5f0a8d4a95d99e3c4f5e6d20743f52f2e01da024d84'
+    const btcTxId4: string = '3d122f7e3c6a65f72b1ca5f0a8d4a95d99e3c4f5e6d20743f52f2e01da024d85'
     const btcAddress: string = 'tb1ppx05dj7lamhlf9a33ut82ld9qvp9mgtddwe7kqgg6jyppscshn6qm2926a'
 
     context('Generic', function () {
@@ -171,6 +172,15 @@ makeSuiteCleanRoom('Mint BRC404', function () {
                 expect( await brc20Contract.balanceOf(userTwoAddress)).to.equal(mintAmount1.mul(2));
                 expect( await brc20Contract.erc721BalanceOf(userTwoAddress)).to.equal(1);
                 expect( await brc20Contract.ownerOf(4)).to.equal(userTwoAddress);
+
+                await expect(brc404Factory.connect(deployer).mintBRC404(
+                    ticker, userTwoAddress, mintAmount, btcTxId4
+                )).to.not.be.reverted
+                expect( await brc20Contract.balanceOf(userTwoAddress)).to.equal(ethers.utils.parseEther('3'));
+                expect( await brc20Contract.erc721BalanceOf(userTwoAddress)).to.equal(3);
+                expect( await brc20Contract.ownerOf(4)).to.equal(userTwoAddress);
+                expect( await brc20Contract.ownerOf(3)).to.equal(userTwoAddress);
+                expect( await brc20Contract.ownerOf(5)).to.equal(userTwoAddress);
             });
         })
     })
