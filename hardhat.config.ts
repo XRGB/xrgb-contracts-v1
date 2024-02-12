@@ -31,7 +31,7 @@ const config: HardhatUserConfig = {
     hardhat: {
       gas: 16000000,
     },
-    bsc_mainnet: {
+    bsc: {
       chainId: 56,
       url: process.env.BSC_MAINNET_RPC_URL || '',
       accounts: [deployer],
@@ -56,7 +56,7 @@ const config: HardhatUserConfig = {
       url: process.env.BASE_TEST_RPC_URL || '',
       accounts: [deployer],
     },
-    eth_mainnet: {
+    mainnet: {
       chainId: 1,
       url: process.env.ETH_MAINNET_RPC_URL || '',
       accounts: [deployer],
@@ -85,6 +85,7 @@ const config: HardhatUserConfig = {
       linea_mainnet: LINEA_BLOCK_EXPLORER_KEY,
       linea_tesetnet: LINEA_BLOCK_EXPLORER_KEY,
       bscTestnet: BNB_BLOCK_EXPLORER_KEY,
+      bsc: BNB_BLOCK_EXPLORER_KEY,
       mainnet: ETHEREUM_BLOCK_EXPLORER_KEY
     },
     customChains: [
