@@ -7,13 +7,12 @@ import { ethers } from 'hardhat';
 
 const deployFn: DeployFunction = async (hre) => {
 
-  const [deployer] = await ethers.getSigners();
-
+  const { deployer, owner } = await hre.getNamedAccounts()
   const BRC404Factory = await getContractFromArtifact(
     hre,
     "BRC404Factory",
     {
-      signerOrProvider: deployer.address,
+      signerOrProvider: owner,
     }
   )
 
@@ -41,17 +40,6 @@ const deployFn: DeployFunction = async (hre) => {
     BRC404Factory.createBRC404("RATS", "RATS", 18, ethers.utils.parseEther("1000000000000"), ethers.utils.parseEther("100000000"))
   )
   console.log("Deploy RATS Successful...")
-
-  const owner = await BRC404Factory.owner();
-  console.log("current owner is: ", owner)
-  console.log("start transfer ownership...")
-  const newOwner = '0x37c1E8a4dCbb721e9f756f45067D441B1e1cE419'
-  await waitForTx(
-    BRC404Factory.transferOwnership(newOwner)
-  )
-  const newowner = await BRC404Factory.owner();
-  console.log("current owner is: ", newowner)
-  console.log("transfer ownership sucessful.")
 }
 
 // This is kept during an upgrade. So no upgrade tag.

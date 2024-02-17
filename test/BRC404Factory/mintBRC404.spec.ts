@@ -9,7 +9,7 @@ import {
     mintAmount1,
     mintAmount2,
     userAddress,
-    deployer,
+    owner,
     brc404Factory,
     ticker,
     symbol,
@@ -39,7 +39,7 @@ makeSuiteCleanRoom('Mint BRC404', function () {
             const units = ethers.utils.parseEther("21000")
 
             const receipt = await waitForTx(
-                brc404Factory.connect(deployer).createBRC404(ticker, symbol, decimals, maxSupply, units)
+                brc404Factory.connect(owner).createBRC404(ticker, symbol, decimals, maxSupply, units)
             );
             expect(receipt.logs.length).to.eq(1, `Expected 1 events, got ${receipt.logs.length}`);
             const event = findEvent(receipt, 'BRC404Created');
@@ -52,16 +52,16 @@ makeSuiteCleanRoom('Mint BRC404', function () {
         context('Negatives', function () {
 
             it('User should fail to mint BRC40 if use same btcTxId.',   async function () {
-                await expect(brc404Factory.connect(deployer).mintBRC404(
+                await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userAddress, mintAmount, btcTxId
                 )).to.not.be.reverted
-                await expect(brc404Factory.connect(deployer).mintBRC404(
+                await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userAddress, mintAmount, btcTxId
                 )).to.be.revertedWithCustomError(brc404Factory, ERRORS.ALREADYMINT)
             });
 
             it('User should fail to burn BRC40 if fee not enough.',   async function () {
-                await expect(brc404Factory.connect(deployer).mintBRC404(
+                await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userAddress, mintAmount, btcTxId
                 )).to.not.be.reverted
                 await expect(brc404Factory.connect(user).burnBRC404(
@@ -71,7 +71,7 @@ makeSuiteCleanRoom('Mint BRC404', function () {
 
             it('User should fail to burn BRC404 if burnBRC404 to same chainid.',   async function () {
                 const fee = ethers.utils.parseEther("0.03")
-                await expect(brc404Factory.connect(deployer).mintBRC404(
+                await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userAddress, mintAmount, btcTxId
                 )).to.not.be.reverted
                 await expect(brc404Factory.connect(user).burnBRC404(
@@ -81,7 +81,7 @@ makeSuiteCleanRoom('Mint BRC404', function () {
 
             it('User should fail to burn BRC404 if chainid not support.',   async function () {
                 const fee = ethers.utils.parseEther("0.03")
-                await expect(brc404Factory.connect(deployer).mintBRC404(
+                await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userAddress, mintAmount, btcTxId
                 )).to.not.be.reverted
                 await expect(brc404Factory.connect(user).burnBRC404(
@@ -92,7 +92,7 @@ makeSuiteCleanRoom('Mint BRC404', function () {
 
         context('Scenarios', function () {
             it('Get correct variable if mint BRC404 success.',   async function () {
-                await expect(brc404Factory.connect(deployer).mintBRC404(
+                await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userAddress, mintAmount, btcTxId
                 )).to.not.be.reverted
 
@@ -105,9 +105,9 @@ makeSuiteCleanRoom('Mint BRC404', function () {
 
             it('Get correct variable if burn BRC40 success.',   async function () {
                 const btcChainId = ethers.constants.MaxUint256;
-                await expect(brc404Factory.connect(deployer).setSupportChain(btcChainId, true)).to.not.be.reverted
+                await expect(brc404Factory.connect(owner).setSupportChain(btcChainId, true)).to.not.be.reverted
 
-                await expect(brc404Factory.connect(deployer).mintBRC404(
+                await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userAddress, mintAmount, btcTxId
                 )).to.not.be.reverted
 
@@ -128,12 +128,12 @@ makeSuiteCleanRoom('Mint BRC404', function () {
 
             it('Get correct tokenid variable if Mint and burn BRC40 success.',   async function () {
                 const btcChainId = ethers.constants.MaxUint256;
-                await expect(brc404Factory.connect(deployer).setSupportChain(btcChainId, true)).to.not.be.reverted
+                await expect(brc404Factory.connect(owner).setSupportChain(btcChainId, true)).to.not.be.reverted
 
-                await expect(brc404Factory.connect(deployer).mintBRC404(
+                await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userAddress, mintAmount, btcTxId
                 )).to.not.be.reverted
-                await expect(brc404Factory.connect(deployer).mintBRC404(
+                await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userAddress, mintAmount, btcTxId1
                 )).to.not.be.reverted
 
@@ -163,19 +163,19 @@ makeSuiteCleanRoom('Mint BRC404', function () {
                 expect( await brc404Contract.ownerOf(2)).to.equal(userAddress);
 
                 brc404Contract = BRC404__factory.connect(brc404Address, userTwo);
-                await expect(brc404Factory.connect(deployer).mintBRC404(
+                await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userTwoAddress, mintAmount1, btcTxId2
                 )).to.not.be.reverted
                 expect( await brc404Contract.balanceOf(userTwoAddress)).to.equal(mintAmount1);
                 expect( await brc404Contract.erc721BalanceOf(userTwoAddress)).to.equal(0);
-                await expect(brc404Factory.connect(deployer).mintBRC404(
+                await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userTwoAddress, mintAmount1, btcTxId3
                 )).to.not.be.reverted
                 expect( await brc404Contract.balanceOf(userTwoAddress)).to.equal(mintAmount1.mul(2));
                 expect( await brc404Contract.erc721BalanceOf(userTwoAddress)).to.equal(1);
                 expect( await brc404Contract.ownerOf(5)).to.equal(userTwoAddress);
 
-                await expect(brc404Factory.connect(deployer).mintBRC404(
+                await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userTwoAddress, mintAmount, btcTxId4
                 )).to.not.be.reverted
                 expect( await brc404Contract.balanceOf(userTwoAddress)).to.equal(burnAmount.mul(3));
@@ -186,8 +186,8 @@ makeSuiteCleanRoom('Mint BRC404', function () {
             });
 
             it('Get correct variable if mint 10000000 BRC404 success.',   async function () {
-                await expect(brc404Factory.connect(deployer).setWhitelist(ticker, userAddress, true)).to.not.be.reverted
-                await expect(brc404Factory.connect(deployer).mintBRC404(
+                await expect(brc404Factory.connect(owner).setWhitelist(ticker, userAddress, true)).to.not.be.reverted
+                await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userAddress, mintAmount2, btcTxId
                 )).to.not.be.reverted
 
@@ -198,7 +198,7 @@ makeSuiteCleanRoom('Mint BRC404', function () {
             });
 
             it('Get correct variable if transfer token to others.',   async function () {
-                await expect(brc404Factory.connect(deployer).mintBRC404(
+                await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userAddress, mintAmount, btcTxId
                 )).to.not.be.reverted
 
@@ -218,7 +218,7 @@ makeSuiteCleanRoom('Mint BRC404', function () {
             });
 
             it('Get correct variable if transfer NFT to others.',   async function () {
-                await expect(brc404Factory.connect(deployer).mintBRC404(
+                await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userAddress, mintAmount, btcTxId
                 )).to.not.be.reverted
 
@@ -238,7 +238,7 @@ makeSuiteCleanRoom('Mint BRC404', function () {
             });
 
             it('Get correct variable if set baseUri.',   async function () {
-                await expect(brc404Factory.connect(deployer).mintBRC404(
+                await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userAddress, mintAmount, btcTxId
                 )).to.not.be.reverted
 
@@ -250,7 +250,7 @@ makeSuiteCleanRoom('Mint BRC404', function () {
                 expect( await brc404Contract.tokenURI(2)).to.equal('2');
 
                 const baseUri = 'https://api.tinfun.com/metadata/'
-                await expect(brc404Factory.connect(deployer).setTokenURI(
+                await expect(brc404Factory.connect(owner).setTokenURI(
                     ticker, baseUri
                 )).to.not.be.reverted
                 expect( await brc404Contract.tokenURI(2)).to.equal('https://api.tinfun.com/metadata/2');

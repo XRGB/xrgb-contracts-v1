@@ -12,7 +12,7 @@ import {Errors} from "./libraries/Errors.sol";
 contract BRC404Factory is ReentrancyGuard, Ownable, BRC404FactoryStorage {
     uint256 internal immutable _chainId;
 
-    constructor() Ownable(msg.sender) {
+    constructor(address owner) Ownable(owner) {
         uint256 chainId;
         assembly {
             chainId := chainid()

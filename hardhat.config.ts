@@ -5,6 +5,7 @@ import 'hardhat-deploy'
 dotenv.config()
 
 const deployer = process.env.DEPLOY_PRIVATE_KEY || '0x' + '11'.repeat(32)
+const owner = process.env.OWNER_PRIVATE_KEY || '0x' + '11'.repeat(32)
 const BASE_BLOCK_EXPLORER_KEY = process.env.BASE_BLOCK_EXPLORER_KEY || '';
 const ETHEREUM_BLOCK_EXPLORER_KEY = process.env.ETHEREUM_BLOCK_EXPLORER_KEY || '';
 const LINEA_BLOCK_EXPLORER_KEY = process.env.LINEA_BLOCK_EXPLORER_KEY || '';
@@ -34,42 +35,42 @@ const config: HardhatUserConfig = {
     bsc: {
       chainId: 56,
       url: process.env.BSC_MAINNET_RPC_URL || '',
-      accounts: [deployer],
+      accounts: [deployer, owner],
     },
     linea_mainnet: {
       chainId: 59144,
       url: process.env.LINEA_RPC_URL || '',
-      accounts: [deployer],
+      accounts: [deployer, owner],
     },
     linea_testnet: {
       chainId: 59140,
       url: process.env.LINEA_TESTNET_RPC_URL || '',
-      accounts: [deployer],
+      accounts: [deployer, owner],
     },
     baseMain: {
       chainId: 8453,
       url: process.env.BASE_MAIN_RPC_URL || '',
-      accounts: [deployer],
+      accounts: [deployer, owner],
     },
     baseSepolia: {
       chainId: 84532,
       url: process.env.BASE_TEST_RPC_URL || '',
-      accounts: [deployer],
+      accounts: [deployer, owner],
     },
     mainnet: {
       chainId: 1,
       url: process.env.ETH_MAINNET_RPC_URL || '',
-      accounts: [deployer],
+      accounts: [deployer, owner],
     },
     goerli: {
       chainId: 5,
       url: process.env.GOERLI_RPC_URL || '',
-      accounts: [deployer],
+      accounts: [deployer, owner],
     },
     bscTestnet: {
       chainId: 97,
       url: process.env.BSC_TESETNET_RPC_URL || '',
-      accounts: [deployer],
+      accounts: [deployer, owner],
     },
   },
   gasReporter: {
@@ -78,6 +79,9 @@ const config: HardhatUserConfig = {
   namedAccounts: {
     deployer: {
       default: 0,
+    },
+    owner: {
+      default: 1,
     }
   },
   etherscan: {

@@ -18,9 +18,11 @@ import hre from 'hardhat'
 
 export let accounts: Signer[];
 export let deployer: Signer;
+export let owner: Signer;
 export let user: Signer;
 export let userTwo: Signer;
 export let deployerAddress: string;
+export let ownerAddress: string;
 export let userAddress: string;
 export let userTwoAddress: string;
 export let brc404Factory: BRC404Factory;
@@ -54,14 +56,16 @@ before(async function () {
   abiCoder = ethers.utils.defaultAbiCoder;
   accounts = await ethers.getSigners();
   deployer = accounts[0];
+  owner = accounts[3];
   user = accounts[1];
   userTwo = accounts[2];
 
   deployerAddress = await deployer.getAddress();
   userAddress = await user.getAddress();
   userTwoAddress = await userTwo.getAddress();
+  ownerAddress = await owner.getAddress();
 
-  brc404Factory = await new BRC404Factory__factory(deployer).deploy();
+  brc404Factory = await new BRC404Factory__factory(deployer).deploy(ownerAddress);
 
   expect(brc404Factory).to.not.be.undefined;
 
@@ -70,7 +74,7 @@ before(async function () {
   await expect(brc404Factory.connect(user).setSupportChain(1, true)).to.be.reverted
   await expect(brc404Factory.connect(user).setFee(10000)).to.be.reverted
 
-  await expect(brc404Factory.connect(deployer).setSupportChain(1, true)).to.not.be.reverted
+  await expect(brc404Factory.connect(owner).setSupportChain(1, true)).to.not.be.reverted
 
   eventsLib = await new Events__factory(deployer).deploy();
 });
