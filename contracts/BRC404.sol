@@ -55,11 +55,9 @@ contract BRC404 is ERC404 {
             revert Errors.ExceedMaxSupply();
         }
         _mintERC20WithERC721(to, amount);
-        emit ERC20Transfer(address(0), to, amount);
     }
 
     function _burnBRC404(address from, uint256 amount) internal {
         _burnERC20WithERC721(from, amount);
-        emit ERC20Transfer(from, address(0), amount);
     }
 }

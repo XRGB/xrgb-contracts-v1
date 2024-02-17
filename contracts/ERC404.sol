@@ -30,32 +30,21 @@ abstract contract ERC721Receiver {
 ///
 abstract contract ERC404 {
     // Events
-    event ERC20Transfer(
-        address indexed from,
-        address indexed to,
-        uint256 amount
-    );
-    event Approval(
-        address indexed owner,
-        address indexed spender,
-        uint256 amount
-    );
-    event Transfer(
-        address indexed from,
-        address indexed to,
-        uint256 indexed id
-    );
-    event ERC721Approval(
-        address indexed owner,
-        address indexed spender,
-        uint256 indexed id
-    );
     event ApprovalForAll(
         address indexed owner,
         address indexed operator,
         bool approved
     );
-
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 amountOrId
+    );
+    event Transfer(
+        address indexed from,
+        address indexed to,
+        uint256 amountOrId
+    );
     // Errors
     error NotFound();
     error AlreadyExists();
@@ -210,7 +199,7 @@ abstract contract ERC404 {
             _ownedIndex[amountOrId] = _owned[to].length - 1;
 
             emit Transfer(from, to, amountOrId);
-            emit ERC20Transfer(from, to, units);
+            emit Transfer(from, to, units);
         } else {
             uint256 allowed = allowance[from][msg.sender];
 
@@ -297,7 +286,7 @@ abstract contract ERC404 {
             }
         }
 
-        emit ERC20Transfer(from, to, amount);
+        emit Transfer(from, to, amount);
         return true;
     }
 
