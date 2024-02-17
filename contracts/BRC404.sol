@@ -8,7 +8,6 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Errors} from "./libraries/Errors.sol";
 
 contract BRC404 is ERC404 {
-    string public dataURI;
     string public baseTokenURI;
     uint256 maxSupply;
     address public immutable factory;
@@ -31,10 +30,6 @@ contract BRC404 is ERC404 {
 
     function setTokenURI(string memory _tokenURI) public onlyFactory {
         baseTokenURI = _tokenURI;
-    }
-
-    function setDataURI(string memory _dataURI) public onlyFactory {
-        dataURI = _dataURI;
     }
 
     function tokenURI(uint256 id) public view override returns (string memory) {

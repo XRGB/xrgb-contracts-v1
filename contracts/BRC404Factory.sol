@@ -111,16 +111,6 @@ contract BRC404Factory is ReentrancyGuard, Ownable, BRC404FactoryStorage {
         BRC404(_ticker[ticker]).setTokenURI(_tokenURI);
     }
 
-    function setDataURI(
-        string memory ticker,
-        string memory _dataURI
-    ) public onlyOwner {
-        if (_ticker[ticker] == address(0x0)) {
-            revert Errors.InvalidTicker();
-        }
-        BRC404(_ticker[ticker]).setTokenURI(_dataURI);
-    }
-
     function withdraw(address to) external onlyOwner {
         uint256 balance = address(this).balance;
         payable(to).transfer(balance);
