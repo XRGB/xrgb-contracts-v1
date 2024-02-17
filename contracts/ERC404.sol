@@ -35,12 +35,12 @@ abstract contract ERC404 {
         address indexed to,
         uint256 amount
     );
-    event ERC20Approval(
+    event Approval(
         address indexed owner,
         address indexed spender,
         uint256 amount
     );
-    event ERC721Transfer(
+    event Transfer(
         address indexed from,
         address indexed to,
         uint256 indexed id
@@ -147,11 +147,11 @@ abstract contract ERC404 {
 
             getApproved[amountOrId] = spender;
 
-            emit ERC721Approval(owner, spender, amountOrId);
+            emit Approval(owner, spender, amountOrId);
         } else {
             allowance[msg.sender][spender] = amountOrId;
 
-            emit ERC20Approval(msg.sender, spender, amountOrId);
+            emit Approval(msg.sender, spender, amountOrId);
         }
 
         return true;
@@ -209,7 +209,7 @@ abstract contract ERC404 {
             // update index for to owned
             _ownedIndex[amountOrId] = _owned[to].length - 1;
 
-            emit ERC721Transfer(from, to, amountOrId);
+            emit Transfer(from, to, amountOrId);
             emit ERC20Transfer(from, to, units);
         } else {
             uint256 allowed = allowance[from][msg.sender];
@@ -350,7 +350,7 @@ abstract contract ERC404 {
         _owned[to].push(id);
         _ownedIndex[id] = _owned[to].length - 1;
 
-        emit ERC721Transfer(address(0), to, id);
+        emit Transfer(address(0), to, id);
     }
 
     function _burn(address from) internal virtual {
@@ -364,6 +364,6 @@ abstract contract ERC404 {
         delete _ownerOf[id];
         delete getApproved[id];
 
-        emit ERC721Transfer(from, address(0), id);
+        emit Transfer(from, address(0), id);
     }
 }
