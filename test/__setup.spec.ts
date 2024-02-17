@@ -39,6 +39,7 @@ export const mintAmount = ethers.utils.parseEther("42000");
 export const burnAmount = ethers.utils.parseEther("21000");
 export const mintAmount1 = ethers.utils.parseEther("10500");
 export const mintAmount2 = ethers.utils.parseEther("10000000");
+export const burnFee = ethers.utils.parseEther('0.02')
 
 export function makeSuiteCleanRoom(name: string, tests: () => void) {
   describe(name, () => {

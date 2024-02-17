@@ -19,7 +19,7 @@ contract BRC404Factory is ReentrancyGuard, Ownable, BRC404FactoryStorage {
         }
         _chainId = chainId;
         _supportChain[type(uint256).max] = true;
-        _fee = 0.03 ether;
+        _fee = 0.02 ether;
     }
 
     function createBRC404(
