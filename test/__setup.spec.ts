@@ -33,9 +33,10 @@ export const BRC404Factory_NAME = 'XRGB';
 export const ticker: string = 'XRGB';
 export const symbol: string = "XRGB";
 export const decimals = 18;
-export const mintAmount = ethers.utils.parseEther("2");
-export const burnAmount = ethers.utils.parseEther("1");
-export const mintAmount1 = ethers.utils.parseEther("0.5");
+export const mintAmount = ethers.utils.parseEther("42000");
+export const burnAmount = ethers.utils.parseEther("21000");
+export const mintAmount1 = ethers.utils.parseEther("10500");
+export const mintAmount2 = ethers.utils.parseEther("10000000");
 
 export function makeSuiteCleanRoom(name: string, tests: () => void) {
   describe(name, () => {

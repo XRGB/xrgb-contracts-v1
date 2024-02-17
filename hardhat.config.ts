@@ -29,7 +29,7 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      gas: 16000000,
+      gas: 29000000,
     },
     bsc: {
       chainId: 56,
@@ -71,6 +71,9 @@ const config: HardhatUserConfig = {
       url: process.env.BSC_TESETNET_RPC_URL || '',
       accounts: [deployer],
     },
+  },
+  gasReporter: {
+  	enabled: false,
   },
   namedAccounts: {
     deployer: {

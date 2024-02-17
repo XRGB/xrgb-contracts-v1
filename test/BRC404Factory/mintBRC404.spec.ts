@@ -7,6 +7,7 @@ import {
     mintAmount,
     burnAmount,
     mintAmount1,
+    mintAmount2,
     userAddress,
     deployer,
     brc404Factory,
@@ -34,8 +35,8 @@ makeSuiteCleanRoom('Mint BRC404', function () {
 
     context('Generic', function () {
         beforeEach(async function () {
-            const maxSupply = ethers.utils.parseEther("10000")
-            const units = ethers.utils.parseEther("1")
+            const maxSupply = ethers.utils.parseEther("210000000")
+            const units = ethers.utils.parseEther("21000")
 
             const receipt = await waitForTx(
                 brc404Factory.connect(deployer).createBRC404(ticker, symbol, decimals, maxSupply, units)
@@ -101,6 +102,7 @@ makeSuiteCleanRoom('Mint BRC404', function () {
                 expect( await brc20Contract.ownerOf(1)).to.equal(userAddress);
                 expect( await brc20Contract.ownerOf(2)).to.equal(userAddress);
             });
+
             it('Get correct variable if burn BRC40 success.',   async function () {
                 const btcChainId = ethers.constants.MaxUint256;
                 await expect(brc404Factory.connect(deployer).setSupportChain(btcChainId, true)).to.not.be.reverted
@@ -155,7 +157,7 @@ makeSuiteCleanRoom('Mint BRC404', function () {
                 await expect(brc404Factory.connect(user).burnBRC404(
                     ticker, mintAmount1, btcChainId, btcAddress, {value: ethers.utils.parseEther('0.03')}
                 )).to.be.not.reverted;
-                expect( await brc20Contract.balanceOf(userAddress)).to.equal(ethers.utils.parseEther('2.5'));
+                expect( await brc20Contract.balanceOf(userAddress)).to.equal(mintAmount1.mul(5));
                 expect( await brc20Contract.erc721BalanceOf(userAddress)).to.equal(2);
                 expect( await brc20Contract.ownerOf(1)).to.equal(userAddress);
                 expect( await brc20Contract.ownerOf(2)).to.equal(userAddress);
@@ -171,16 +173,68 @@ makeSuiteCleanRoom('Mint BRC404', function () {
                 )).to.not.be.reverted
                 expect( await brc20Contract.balanceOf(userTwoAddress)).to.equal(mintAmount1.mul(2));
                 expect( await brc20Contract.erc721BalanceOf(userTwoAddress)).to.equal(1);
-                expect( await brc20Contract.ownerOf(4)).to.equal(userTwoAddress);
+                expect( await brc20Contract.ownerOf(5)).to.equal(userTwoAddress);
 
                 await expect(brc404Factory.connect(deployer).mintBRC404(
                     ticker, userTwoAddress, mintAmount, btcTxId4
                 )).to.not.be.reverted
-                expect( await brc20Contract.balanceOf(userTwoAddress)).to.equal(ethers.utils.parseEther('3'));
+                expect( await brc20Contract.balanceOf(userTwoAddress)).to.equal(burnAmount.mul(3));
                 expect( await brc20Contract.erc721BalanceOf(userTwoAddress)).to.equal(3);
-                expect( await brc20Contract.ownerOf(4)).to.equal(userTwoAddress);
-                expect( await brc20Contract.ownerOf(3)).to.equal(userTwoAddress);
+                expect( await brc20Contract.ownerOf(7)).to.equal(userTwoAddress);
+                expect( await brc20Contract.ownerOf(6)).to.equal(userTwoAddress);
                 expect( await brc20Contract.ownerOf(5)).to.equal(userTwoAddress);
+            });
+
+            it('Get correct variable if mint 10000000 BRC404 success.',   async function () {
+                await expect(brc404Factory.connect(deployer).setWhitelist(ticker, userAddress, true)).to.not.be.reverted
+                await expect(brc404Factory.connect(deployer).mintBRC404(
+                    ticker, userAddress, mintAmount2, btcTxId
+                )).to.not.be.reverted
+
+                let brc20Contract = BRC404__factory.connect(brc404Address, user);
+
+                expect( await brc20Contract.balanceOf(userAddress)).to.equal(mintAmount2);
+                expect( await brc20Contract.erc721BalanceOf(userAddress)).to.equal(0);
+            });
+
+            it('Get correct variable if transfer token to others.',   async function () {
+                await expect(brc404Factory.connect(deployer).mintBRC404(
+                    ticker, userAddress, mintAmount, btcTxId
+                )).to.not.be.reverted
+
+                let brc20Contract = BRC404__factory.connect(brc404Address, user);
+                expect( await brc20Contract.balanceOf(userAddress)).to.equal(mintAmount);
+                expect( await brc20Contract.erc721BalanceOf(userAddress)).to.equal(2);
+                expect( await brc20Contract.ownerOf(1)).to.equal(userAddress);
+                expect( await brc20Contract.ownerOf(2)).to.equal(userAddress);
+
+                await expect(brc20Contract.transfer(userTwoAddress, burnAmount)).to.not.be.reverted
+                expect( await brc20Contract.balanceOf(userAddress)).to.equal(burnAmount);
+                expect( await brc20Contract.erc721BalanceOf(userAddress)).to.equal(1);
+                expect( await brc20Contract.ownerOf(1)).to.equal(userAddress);
+                expect( await brc20Contract.balanceOf(userTwoAddress)).to.equal(burnAmount);
+                expect( await brc20Contract.erc721BalanceOf(userTwoAddress)).to.equal(1);
+                expect( await brc20Contract.ownerOf(3)).to.equal(userTwoAddress);
+            });
+
+            it('Get correct variable if transfer NFT to others.',   async function () {
+                await expect(brc404Factory.connect(deployer).mintBRC404(
+                    ticker, userAddress, mintAmount, btcTxId
+                )).to.not.be.reverted
+
+                let brc20Contract = BRC404__factory.connect(brc404Address, user);
+                expect( await brc20Contract.balanceOf(userAddress)).to.equal(mintAmount);
+                expect( await brc20Contract.erc721BalanceOf(userAddress)).to.equal(2);
+                expect( await brc20Contract.ownerOf(1)).to.equal(userAddress);
+                expect( await brc20Contract.ownerOf(2)).to.equal(userAddress);
+                
+                await expect(brc20Contract.transferFrom(userAddress, userTwoAddress, 1)).to.not.be.reverted
+                expect( await brc20Contract.balanceOf(userAddress)).to.equal(burnAmount);
+                expect( await brc20Contract.erc721BalanceOf(userAddress)).to.equal(1);
+                expect( await brc20Contract.ownerOf(2)).to.equal(userAddress);
+                expect( await brc20Contract.balanceOf(userTwoAddress)).to.equal(burnAmount);
+                expect( await brc20Contract.erc721BalanceOf(userTwoAddress)).to.equal(1);
+                expect( await brc20Contract.ownerOf(1)).to.equal(userTwoAddress);
             });
         })
     })

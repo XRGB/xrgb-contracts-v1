@@ -56,38 +56,15 @@ contract BRC404 is ERC404 {
     /**************Internal Function **********/
 
     function _mintBRC404(address to, uint256 amount) internal {
-        totalSupply += amount;
-        if (totalSupply > maxSupply) {
+        if (totalSupply + amount > maxSupply) {
             revert Errors.ExceedMaxSupply();
         }
-
-        uint256 balanceBeforeReceiver = balanceOf[to];
-        unchecked {
-            balanceOf[to] += amount;
-        }
-        uint256 tokens_to_mint = (balanceOf[to] / units) -
-            (balanceBeforeReceiver / units);
-
-        for (uint256 i = 0; i < tokens_to_mint; i++) {
-            _retrieveOrMintERC721(to);
-        }
-
+        _mintERC20WithERC721(to, amount);
         emit ERC20Transfer(address(0), to, amount);
     }
 
     function _burnBRC404(address from, uint256 amount) internal {
-        uint256 balanceBeforeSender = balanceOf[from];
-        balanceOf[from] -= amount;
-        unchecked {
-            totalSupply -= amount;
-        }
-        uint256 tokens_to_burn = (balanceBeforeSender / units) -
-            (balanceOf[from] / units);
-
-        for (uint256 i = 0; i < tokens_to_burn; i++) {
-            _withdrawAndStoreERC721(from);
-        }
-
+        _burnERC20WithERC721(from, amount);
         emit ERC20Transfer(from, address(0), amount);
     }
 }
