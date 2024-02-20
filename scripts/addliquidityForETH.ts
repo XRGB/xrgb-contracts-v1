@@ -33,17 +33,13 @@ async function main() {
   const [deployer] = await hre.ethers.getSigners();
   const provider = ethers.getDefaultProvider();
 
-  //goerli testnet
-  const brc404Factory = "0x73dCa04e66CEe212B2101C0799F115e0117D02F9";
-  const token0 = "0xa8e2d17388CE6Fa4a944CE362f9c299250921797";
-  const token1 = "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6";
+  //eth mainnet 
+  const brc404Factory = "0xd0c11Fc959E22b8e9B69c97Ea3cD334d480ce203"; //BRC404Factory
+  const token0 = "0x5cc5E64AB764A0f1E97F23984E20fD4528356a6a";  //XRGB Token
+  const token1 = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";  //WETH
 
-  // const brc404Factory = "0xd0c11Fc959E22b8e9B69c97Ea3cD334d480ce203"; //BRC404Factory
-  // const token0 = "0x5cc5E64AB764A0f1E97F23984E20fD4528356a6a";  //XRGB Token
-  // const token1 = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";  //WETH
-
+  //NonfungiblePositionManager addr
   const NonfungiblePositionManagerAddr = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88";
-  //const swapRouterAddr = "0xE592427A0AEce92De3Edee1F18E0157C05861564";
   const UniswapV3FactoryAddr = "0x1F98431c8aD98523631AE4a59f267346ea31F984";
 
   //caculate the pool address
@@ -53,12 +49,12 @@ async function main() {
   )
   console.log("expectedPoolAddress: ",expectedPoolAddress)
 
-  //create UniswapV3 Pool //0.047619 usdt
-  const price = encodePriceSqrt(47619, 29125900000);
-
+  //create UniswapV3 Pool //0.047619
+  const price = encodePriceSqrt(47619, 2912590000);
   const NFTPositionManagerContract = new ethers.Contract(NonfungiblePositionManagerAddr, NonfungiblePositionManagerABI, provider);
   const initializePoolTransaction = await NFTPositionManagerContract.connect(deployer).createAndInitializePoolIfNecessary(token0, token1, 10000, price)
   await initializePoolTransaction.wait();
+  console.log("createAndInitializePoolIfNecessary successful!");
 
   //Check the Pool address
   const SwapFactoryContract = new ethers.Contract(UniswapV3FactoryAddr, uniswapFactoryABI, provider);
@@ -76,6 +72,7 @@ async function main() {
   const approveTx = await BRC404Contract.connect(deployer).approve(NonfungiblePositionManagerAddr, constants.MaxUint256);
   await approveTx.wait();
   console.log("approve XRGB to NonfungiblePositionManagerAddr successful.");
+
   //check amount
   const getApproveAmount = await BRC404Contract.connect(deployer).allowance(deployer.address, NonfungiblePositionManagerAddr);
   expect(getApproveAmount).to.eq(constants.MaxUint256)
@@ -96,6 +93,7 @@ async function main() {
           deadline: 1716128564
   })
   await mintTransaction.wait();
+  console.log("add liquidity 0 successful.")
 
   //add 2000000 XRGB in price, 0.104 ～ 0.204 USDT
   console.log("start to add liquidity 1.")
