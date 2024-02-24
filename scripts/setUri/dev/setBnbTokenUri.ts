@@ -5,7 +5,7 @@ async function main() {
   const [deployer, owner] = await hre.ethers.getSigners();
 
   const brc404Factory = "0x22B296E5F19574F8E41dC326Ab00d10B018817f4"; //BRC404Factory
-  const baseUri = "https://api-dev.xrgb.xyz/api/nft/bnb/xrgb/medadata/"
+  const baseUri = "https://api-dev.xrgb.xyz/api/nft/bnb/xrgb/metadata/"
 
   const chainId = hre.network.config.chainId;
   if(chainId !== 97){
