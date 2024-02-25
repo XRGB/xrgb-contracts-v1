@@ -67,6 +67,11 @@ const config: HardhatUserConfig = {
       url: process.env.GOERLI_RPC_URL || '',
       accounts: [deployer, owner],
     },
+    sepolia: {
+      chainId: 11155111,
+      url: process.env.SEPOLIA_RPC_URL || '',
+      accounts: [deployer, owner],
+    },
     bscTestnet: {
       chainId: 97,
       url: process.env.BSC_TESETNET_RPC_URL || '',
@@ -93,7 +98,8 @@ const config: HardhatUserConfig = {
       linea_tesetnet: LINEA_BLOCK_EXPLORER_KEY,
       bscTestnet: BNB_BLOCK_EXPLORER_KEY,
       bsc: BNB_BLOCK_EXPLORER_KEY,
-      mainnet: ETHEREUM_BLOCK_EXPLORER_KEY
+      mainnet: ETHEREUM_BLOCK_EXPLORER_KEY,
+      sepolia: ETHEREUM_BLOCK_EXPLORER_KEY
     },
     customChains: [
       {
