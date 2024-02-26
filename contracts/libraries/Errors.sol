@@ -22,4 +22,5 @@ library Errors {
     error InvalidRecipient();
     error InvalidSender();
     error UnsafeRecipient();
+    error InvalidParams();
 }

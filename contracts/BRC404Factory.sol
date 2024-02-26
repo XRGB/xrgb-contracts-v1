@@ -32,6 +32,9 @@ contract BRC404Factory is ReentrancyGuard, Ownable, BRC404FactoryStorage {
         if (_ticker[name] != address(0x0)) {
             revert Errors.TickerAlreadyExist();
         }
+        if (nftUnit > maxSupply || maxSupply % nftUnit != 0) {
+            revert Errors.InvalidParams();
+        }
         _parameters = DataTypes.CreateBRC404Parameters({
             name: name,
             symbol: symbol,
