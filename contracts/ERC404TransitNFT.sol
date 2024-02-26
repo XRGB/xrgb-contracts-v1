@@ -14,6 +14,7 @@ contract ERC404TransitNFT is ERC721, Ownable {
     address erc404Address;
     string public baseTokenURI;
     string public contractURI;
+
     mapping(uint256 => bool) public enableNft;
 
     constructor(
