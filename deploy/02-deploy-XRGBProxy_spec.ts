@@ -13,8 +13,8 @@ const deployFn: DeployFunction = async (hre) => {
     const name = "XRGB";
     const symbol = "XRGB";
     const erc404XRGB = "0x5cc5E64AB764A0f1E97F23984E20fD4528356a6a";
-    const baseTokenURI = "https://api.xrgb.xyz/api/nft/eth/xrgb/contract";
-    const contractURI = "https://api.xrgb.xyz/api/nft/eth/xrgb/metadata/";
+    const baseTokenURI = "https://api.xrgb.xyz/api/nft/eth/xrgb/metadata/";
+    const contractURI = "https://api.xrgb.xyz/api/nft/eth/xrgb/contract";
     
     const deployTx = await upgrades.deployProxy(XRGBProxy, [name, symbol, baseTokenURI, contractURI, deployer, erc404XRGB]);
     console.log("XRGBProxy deployed to: ", deployTx.address);
