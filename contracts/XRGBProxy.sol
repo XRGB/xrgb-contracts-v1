@@ -22,12 +22,16 @@ contract XRGBProxy is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     function initialize(
         string memory name,
         string memory symbol,
+        string memory baseTokenUri,
+        string memory contractUri,
         address initialOwner,
         address erc404Contract
     ) public initializer {
         __ERC721_init(name, symbol);
         __Ownable_init(initialOwner);
         erc404Address = erc404Contract;
+        baseTokenURI = baseTokenUri;
+        contractURI = contractUri;
     }
 
     function setContractURI(
