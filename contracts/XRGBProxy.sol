@@ -2,13 +2,15 @@
 
 pragma solidity ^0.8.17;
 
-import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC404} from "./interfaces/IERC404.sol";
 
-contract ERC404TransitNFT is ERC721, Ownable {
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {ERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+
+contract XRGBProxy is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     using Strings for uint256;
 
     address erc404Address;
@@ -17,11 +19,14 @@ contract ERC404TransitNFT is ERC721, Ownable {
 
     mapping(uint256 => bool) public enableNft;
 
-    constructor(
+    function initialize(
         string memory name,
         string memory symbol,
+        address initialOwner,
         address erc404Contract
-    ) ERC721(name, symbol) Ownable(msg.sender) {
+    ) public initializer {
+        __ERC721_init(name, symbol);
+        __Ownable_init(initialOwner);
         erc404Address = erc404Contract;
     }
 
@@ -65,15 +70,6 @@ contract ERC404TransitNFT is ERC721, Ownable {
         emit Transfer(from, to, tokenId);
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public virtual override {
-        IERC721(erc404Address).safeTransferFrom(from, to, tokenId);
-        emit Transfer(from, to, tokenId);
-    }
-
     function transferFrom(
         address from,
         address to,
@@ -102,8 +98,10 @@ contract ERC404TransitNFT is ERC721, Ownable {
         for (uint256 i = 0; i < nftIds.length; i++) {
             if (!enableNft[nftIds[i]]) {
                 address owner = IERC721(erc404Address).ownerOf(nftIds[i]);
-                enableNft[nftIds[i]] = true;
-                emit Transfer(address(0x0), owner, nftIds[i]);
+                if (owner != address(0)) {
+                    enableNft[nftIds[i]] = true;
+                    emit Transfer(address(0), owner, nftIds[i]);
+                }
             }
         }
     }
