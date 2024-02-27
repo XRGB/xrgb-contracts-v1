@@ -77,6 +77,11 @@ const config: HardhatUserConfig = {
       url: process.env.BSC_TESETNET_RPC_URL || '',
       accounts: [deployer, owner],
     },
+    merlinTestnet: {
+      chainId: 686868,
+      url: `https://testnet-rpc.merlinchain.io`,
+      accounts: [deployer, owner],
+    },
   },
   gasReporter: {
   	enabled: false,
