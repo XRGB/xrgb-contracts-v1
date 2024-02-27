@@ -9,6 +9,7 @@ import {Errors} from "./libraries/Errors.sol";
 
 contract BRC404 is ERC404 {
     string public baseTokenURI;
+    string public contractURI;
     uint256 maxSupply;
     address public immutable factory;
 
@@ -30,6 +31,10 @@ contract BRC404 is ERC404 {
 
     function setTokenURI(string memory _tokenURI) public onlyFactory {
         baseTokenURI = _tokenURI;
+    }
+
+    function setContractURI(string memory _contractURI) public onlyFactory {
+        contractURI = _contractURI;
     }
 
     function tokenURI(uint256 id) public view override returns (string memory) {
