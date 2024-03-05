@@ -185,15 +185,15 @@ makeSuiteCleanRoom('Mint BRC404', function () {
                 )).to.not.be.reverted
                 expect( await brc404Contract.balanceOf(userTwoAddress)).to.equal(mintAmount1.mul(2));
                 expect( await brc404Contract.erc721BalanceOf(userTwoAddress)).to.equal(1);
-                expect( await brc404Contract.ownerOf(5)).to.equal(userTwoAddress);
+                expect( await brc404Contract.ownerOf(4)).to.equal(userTwoAddress);
 
                 await expect(brc404Factory.connect(owner).mintBRC404(
                     ticker, userTwoAddress, mintAmount, btcTxId4
                 )).to.not.be.reverted
                 expect( await brc404Contract.balanceOf(userTwoAddress)).to.equal(burnAmount.mul(3));
                 expect( await brc404Contract.erc721BalanceOf(userTwoAddress)).to.equal(3);
-                expect( await brc404Contract.ownerOf(7)).to.equal(userTwoAddress);
-                expect( await brc404Contract.ownerOf(6)).to.equal(userTwoAddress);
+                expect( await brc404Contract.ownerOf(3)).to.equal(userTwoAddress);
+                expect( await brc404Contract.ownerOf(4)).to.equal(userTwoAddress);
                 expect( await brc404Contract.ownerOf(5)).to.equal(userTwoAddress);
             });
 
@@ -316,7 +316,7 @@ makeSuiteCleanRoom('Mint BRC404', function () {
                 expect( await brc404Contract.ownerOf(1)).to.equal(userAddress);
                 expect( await brc404Contract.balanceOf(userTwoAddress)).to.equal(burnAmount);
                 expect( await brc404Contract.erc721BalanceOf(userTwoAddress)).to.equal(1);
-                expect( await brc404Contract.ownerOf(3)).to.equal(userTwoAddress);
+                expect( await brc404Contract.ownerOf(2)).to.equal(userTwoAddress);
             });
 
             it('Get correct variable if transferFrom erc20.',   async function () {
