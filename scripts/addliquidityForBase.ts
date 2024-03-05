@@ -54,7 +54,7 @@ async function main() {
 
   const ticker = "XRGB";
   const BRC404FactoryContract = await hre.ethers.getContractAt("BRC404Factory", brc404Factory);
-  const setWhitelistTransaction = await BRC404FactoryContract.connect(deployer).setWhitelist(ticker, poolAddress, true)
+  const setWhitelistTransaction = await BRC404FactoryContract.connect(deployer).setERC721TransferExempt(ticker, poolAddress, true)
   await setWhitelistTransaction.wait()
   console.log("setWhitelist successful: ", poolAddress)
 

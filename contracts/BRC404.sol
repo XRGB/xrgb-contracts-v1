@@ -49,8 +49,11 @@ contract BRC404 is ERC404 {
         _burnBRC404(from, amount);
     }
 
-    function setWhitelist(address target_, bool state_) external onlyFactory {
-        _setWhitelist(target_, state_);
+    function setERC721TransferExempt(
+        address target_,
+        bool state_
+    ) external onlyFactory {
+        _setERC721TransferExempt(target_, state_);
     }
 
     /**************Internal Function **********/
@@ -59,10 +62,10 @@ contract BRC404 is ERC404 {
         if (totalSupply + amount > maxSupply) {
             revert Errors.ExceedMaxSupply();
         }
-        _mintERC20WithERC721(to, amount);
+        _transferERC20WithERC721(address(0), to, amount);
     }
 
     function _burnBRC404(address from, uint256 amount) internal {
-        _burnERC20WithERC721(from, amount);
+        _transferERC20WithERC721(from, address(0), amount);
     }
 }

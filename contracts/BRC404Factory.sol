@@ -138,7 +138,7 @@ contract BRC404Factory is ReentrancyGuard, Ownable, BRC404FactoryStorage {
         _fee = newfee;
     }
 
-    function setWhitelist(
+    function setERC721TransferExempt(
         string memory ticker,
         address target,
         bool state
@@ -146,6 +146,6 @@ contract BRC404Factory is ReentrancyGuard, Ownable, BRC404FactoryStorage {
         if (_ticker[ticker] == address(0x0)) {
             revert Errors.InvalidTicker();
         }
-        BRC404(_ticker[ticker]).setWhitelist(target, state);
+        BRC404(_ticker[ticker]).setERC721TransferExempt(target, state);
     }
 }
