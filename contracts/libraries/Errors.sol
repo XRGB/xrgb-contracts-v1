@@ -17,10 +17,8 @@ library Errors {
     error TickerAlreadyExist();
     error Unauthorized();
 
-    error NotFound();
     error AlreadyExists();
     error InvalidRecipient();
-    error InvalidSender();
-    error UnsafeRecipient();
     error InvalidParams();
+    error SendEthFailed();
 }

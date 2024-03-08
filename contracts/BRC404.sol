@@ -38,6 +38,9 @@ contract BRC404 is ERC404 {
     }
 
     function tokenURI(uint256 id) public view override returns (string memory) {
+        if (_getOwnerOf(id) == address(0)) {
+            revert NotFound();
+        }
         return string.concat(baseTokenURI, Strings.toString(id));
     }
 
@@ -59,6 +62,9 @@ contract BRC404 is ERC404 {
     /**************Internal Function **********/
 
     function _mintBRC404(address to, uint256 amount) internal {
+        if (to == address(0)) {
+            revert InvalidRecipient();
+        }
         if (totalSupply + amount > maxSupply) {
             revert Errors.ExceedMaxSupply();
         }
@@ -66,6 +72,9 @@ contract BRC404 is ERC404 {
     }
 
     function _burnBRC404(address from, uint256 amount) internal {
+        if (from == address(0)) {
+            revert InvalidSender();
+        }
         _transferERC20WithERC721(from, address(0), amount);
     }
 }

@@ -91,6 +91,14 @@ contract BRC404Factory is ReentrancyGuard, Ownable, BRC404FactoryStorage {
         if (!_supportChain[chainId] || _chainId == chainId) {
             revert Errors.InvalidChainId();
         }
+        if (msg.value > _fee) {
+            (bool sucesss, ) = payable(msg.sender).call{
+                value: msg.value - _fee
+            }("");
+            if (!sucesss) {
+                revert Errors.SendEthFailed();
+            }
+        }
 
         BRC404(_ticker[ticker]).burnBRC404(msg.sender, amount);
 
@@ -125,6 +133,9 @@ contract BRC404Factory is ReentrancyGuard, Ownable, BRC404FactoryStorage {
     }
 
     function withdraw(address to) external onlyOwner {
+        if (to == address(0)) {
+            revert Errors.InvalidRecipient();
+        }
         uint256 balance = address(this).balance;
         payable(to).transfer(balance);
     }

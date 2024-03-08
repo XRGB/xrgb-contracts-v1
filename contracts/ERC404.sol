@@ -33,12 +33,6 @@ abstract contract ERC404 is IERC404 {
     ///      minted id, monotonically increasing to ensure accurate ownership
     uint256 public minted;
 
-    /// @dev Initial chain id for EIP-2612 support
-    uint256 internal immutable _INITIAL_CHAIN_ID;
-
-    /// @dev Initial domain separator for EIP-2612 support
-    bytes32 internal immutable _INITIAL_DOMAIN_SEPARATOR;
-
     /// @dev Balance of user in ERC-20 representation
     mapping(address => uint256) public balanceOf;
 
@@ -68,12 +62,6 @@ abstract contract ERC404 is IERC404 {
 
     /// @dev Owned index bitmask for packed ownership data
     uint256 private constant _BITMASK_OWNED_INDEX = ((1 << 96) - 1) << 160;
-
-    constructor() {
-        // EIP-2612 initialization
-        _INITIAL_CHAIN_ID = block.chainid;
-        _INITIAL_DOMAIN_SEPARATOR = _computeDomainSeparator();
-    }
 
     /// @notice Function to find owner of a given ERC-721 token
     function ownerOf(
@@ -113,7 +101,7 @@ abstract contract ERC404 is IERC404 {
     }
 
     function erc721TotalSupply() public view virtual returns (uint256) {
-        return minted;
+        return minted - _storedERC721Ids.length();
     }
 
     function getERC721QueueLength() public view virtual returns (uint256) {
@@ -149,6 +137,9 @@ abstract contract ERC404 is IERC404 {
         address spender_,
         uint256 valueOrId_
     ) public virtual returns (bool) {
+        if (spender_ == address(0)) {
+            revert InvalidSpender();
+        }
         if (_isValidTokenId(valueOrId_)) {
             erc721Approve(spender_, valueOrId_);
         } else {
@@ -159,6 +150,9 @@ abstract contract ERC404 is IERC404 {
     }
 
     function erc721Approve(address spender_, uint256 id_) public virtual {
+        if (spender_ == address(0)) {
+            revert InvalidSpender();
+        }
         // Intention is to approve as ERC-721 token (id).
         address erc721Owner = _getOwnerOf(id_);
 
@@ -354,75 +348,6 @@ abstract contract ERC404 is IERC404 {
         }
     }
 
-    /// @notice Function for EIP-2612 permits (ERC-20 only).
-    /// @dev Providing type(uint256).max for permit value results in an
-    ///      unlimited approval that is not deducted from on transfers.
-    function permit(
-        address owner_,
-        address spender_,
-        uint256 value_,
-        uint256 deadline_,
-        uint8 v_,
-        bytes32 r_,
-        bytes32 s_
-    ) public virtual {
-        if (deadline_ < block.timestamp) {
-            revert PermitDeadlineExpired();
-        }
-
-        // permit cannot be used for ERC-721 token approvals, so ensure
-        // the value does not fall within the valid range of ERC-721 token ids.
-        if (_isValidTokenId(value_)) {
-            revert InvalidApproval();
-        }
-
-        if (spender_ == address(0)) {
-            revert InvalidSpender();
-        }
-
-        unchecked {
-            address recoveredAddress = ecrecover(
-                keccak256(
-                    abi.encodePacked(
-                        "\x19\x01",
-                        DOMAIN_SEPARATOR(),
-                        keccak256(
-                            abi.encode(
-                                keccak256(
-                                    "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"
-                                ),
-                                owner_,
-                                spender_,
-                                value_,
-                                nonces[owner_]++,
-                                deadline_
-                            )
-                        )
-                    )
-                ),
-                v_,
-                r_,
-                s_
-            );
-
-            if (recoveredAddress == address(0) || recoveredAddress != owner_) {
-                revert InvalidSigner();
-            }
-
-            allowance[recoveredAddress][spender_] = value_;
-        }
-
-        emit ERC20Events.Approval(owner_, spender_, value_);
-    }
-
-    /// @notice Returns domain initial domain separator, or recomputes if chain id is not equal to initial chain id
-    function DOMAIN_SEPARATOR() public view virtual returns (bytes32) {
-        return
-            block.chainid == _INITIAL_CHAIN_ID
-                ? _INITIAL_DOMAIN_SEPARATOR
-                : _computeDomainSeparator();
-    }
-
     function supportsInterface(
         bytes4 interfaceId
     ) public view virtual returns (bool) {
@@ -447,22 +372,6 @@ abstract contract ERC404 is IERC404 {
         return id_ <= minted && id_ != type(uint256).max;
     }
 
-    /// @notice Internal function to compute domain separator for EIP-2612 permits
-    function _computeDomainSeparator() internal view virtual returns (bytes32) {
-        return
-            keccak256(
-                abi.encode(
-                    keccak256(
-                        "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
-                    ),
-                    keccak256(bytes(name)),
-                    keccak256("1"),
-                    block.chainid,
-                    address(this)
-                )
-            );
-    }
-
     /// @notice This is the lowest level ERC-20 transfer function, which
     ///         should be used for both normal ERC-20 transfers as well as minting.
     /// Note that this function allows transfers to and from 0x0.
@@ -482,8 +391,12 @@ abstract contract ERC404 is IERC404 {
 
         // Update the recipient's balance.
         // Can be unchecked because on mint, adding to totalSupply is checked, and on transfer balance deduction is checked.
-        unchecked {
-            balanceOf[to_] += value_;
+        if (to_ == address(0)) {
+            totalSupply -= value_;
+        } else {
+            unchecked {
+                balanceOf[to_] += value_;
+            }
         }
 
         emit ERC20Events.Transfer(from_, to_, value_);
@@ -645,20 +558,6 @@ abstract contract ERC404 is IERC404 {
         }
 
         return true;
-    }
-
-    /// @notice Internal function for ERC20 minting
-    /// @dev This function will allow minting of new ERC20s.
-    ///      If mintCorrespondingERC721s_ is true, and the recipient is not ERC-721 exempt, it will
-    ///      also mint the corresponding ERC721s.
-    /// Handles ERC-721 exemptions.
-    function _mintERC20(address to_, uint256 value_) internal virtual {
-        /// You cannot mint to the zero address (you can't mint and immediately burn in the same transfer).
-        if (to_ == address(0)) {
-            revert InvalidRecipient();
-        }
-
-        _transferERC20WithERC721(address(0), to_, value_);
     }
 
     /// @notice Internal function for ERC-721 minting and retrieval from the bank.
