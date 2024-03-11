@@ -137,9 +137,6 @@ abstract contract ERC404 is IERC404 {
         address spender_,
         uint256 valueOrId_
     ) public virtual returns (bool) {
-        if (spender_ == address(0)) {
-            revert InvalidSpender();
-        }
         if (_isValidTokenId(valueOrId_)) {
             erc721Approve(spender_, valueOrId_);
         } else {
@@ -150,9 +147,6 @@ abstract contract ERC404 is IERC404 {
     }
 
     function erc721Approve(address spender_, uint256 id_) public virtual {
-        if (spender_ == address(0)) {
-            revert InvalidSpender();
-        }
         // Intention is to approve as ERC-721 token (id).
         address erc721Owner = _getOwnerOf(id_);
 
